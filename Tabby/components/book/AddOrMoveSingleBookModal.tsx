@@ -25,7 +25,7 @@ const AddOrMoveSingleBookModal: React.FC<AddOrMoveSingleBookModalProps> = ({
     // true means will be adding book false means will be moving book by default will set to adding book
     const [addOrMoveBook, setAddOrMoveBook] = useState(true);
     const [loading, setLoading] = useState(false);
-    console.log("is possible to move book", isPossibleToMoveBook)
+    console.log("is possible to move book", isPossibleToMoveBook + " " + addOrMoveBook);
 
     // Toggle selection of categories
     const toggleCategorySelection = (category: string) => {
@@ -75,7 +75,7 @@ const AddOrMoveSingleBookModal: React.FC<AddOrMoveSingleBookModalProps> = ({
         return (
             <View className="flex-row items-center">
                 <Text className="text-black text-lg font-semibold">
-                    {addOrMoveBook ? "Add Book To" : "Move Book To"}
+                    {addOrMoveBook ? "Add Book" : "Move Book"}
                 </Text>
                 <Switch
                     value={addOrMoveBook}
@@ -95,13 +95,13 @@ const AddOrMoveSingleBookModal: React.FC<AddOrMoveSingleBookModalProps> = ({
             {/* Backdrop to ensure clicks outside */}
             <Pressable className="flex-1" onPress={onClose}></Pressable>
 
-            <View className="absolute top-12 right-2 bg-white border border-gray-300 rounded-md w-40 p-1">
+            <View className={`absolute top-28 right-2 bg-white border border-gray-300 rounded-md w-40 p-1`}>
                 <View className="">
                     {/* only render switch if possible to move book otherwise just render add book message*/}
                     {isPossibleToMoveBook ? (
                         AddOrMoveSwitch()
                     ) : (
-                        <Text className="text-lg text-black font-semibold">Add Book To</Text>
+                        <Text className="text-lg text-black font-semibold text-center">Add Book</Text>
                     )}
                 </View>
 
@@ -132,13 +132,13 @@ const AddOrMoveSingleBookModal: React.FC<AddOrMoveSingleBookModalProps> = ({
                     <LoadingSpinner />
                 </View> : <View className="flex-row justify-between mt-2">
                     <Pressable
-                        className="p-2 bg-blue-500 rounded-lg"
+                        className="p-2 bg-blue-500 rounded-lg mr-1"
                         onPress={handleAddBook}
                     >
                         <Text className="text-white">Confirm</Text>
                     </Pressable>
                     <Pressable
-                        className="p-2 mr-2 bg-gray-300 rounded-lg"
+                        className="p-2  bg-gray-300 rounded-lg"
                         onPress={onClose}
                     >
                         <Text className="text-gray-800">Cancel</Text>

@@ -19,7 +19,7 @@ const UpdateBookNotesModal = ({ visible, notes, onClose, onUpdateNotes }: Update
 
     return (
 
-        <Modal visible={visible} animationType="slide" transparent={true}>
+        <Modal visible={visible} animationType="fade" transparent={true}>
             <TouchableWithoutFeedback onPress={onClose}>
                 <View className="flex-1 justify-center items-center bg-black/50">
                     <TouchableWithoutFeedback >

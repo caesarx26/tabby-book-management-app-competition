@@ -144,7 +144,7 @@ const AddBooksOrMoveBooksToCategoryModal: React.FC<AddBooksOrMoveBooksToCategory
             data={booksToAdd}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <View className="flex-row items-center b-2">
+              <View className="flex-row items-center mb-2">
                 <Text className="text-sm text-gray-800">•{item.title} by {item.author}</Text>
               </View>
             )}

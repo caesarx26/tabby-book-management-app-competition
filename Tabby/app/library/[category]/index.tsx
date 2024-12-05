@@ -11,7 +11,6 @@ import {
     ScrollView
 } from "react-native";
 import BookPreview from "@/components/BookPreview";
-import { SafeAreaView } from "react-native-safe-area-context";
 import FavoriteButtonIcon from "@/components/FavoriteButtonIcon";
 import { SearchBar } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
@@ -530,7 +529,7 @@ const CategoryPage: React.FC = () => {
 
     return (
 
-        <SafeAreaView className="flex-1">
+        <View className="flex-1">
             {loadingInitialBooks ? <View className="w-full h-full">
                 <LoadingSpinner />
             </View> : <>
@@ -689,7 +688,7 @@ const CategoryPage: React.FC = () => {
             </>}
 
 
-        </SafeAreaView>
+        </View>
     );
 };
 

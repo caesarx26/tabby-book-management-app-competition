@@ -1,13 +1,14 @@
 import React from "react";
-import { Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Text, View } from "react-native";
 import { Link } from "expo-router";
 import { getAllCategories } from "@/database/databaseOperations";
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const WelcomeScreen = () => {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   // will check if there are any categories if there are some no need to welcome user as they have used the app before
@@ -34,11 +35,11 @@ const WelcomeScreen = () => {
 
   const handleShowingLoading = () => {
     if (isLoading) {
-      return <SafeAreaView className="flex-1 justify-center items-center bg-[#1E1E1E] h-full">
+      return <View className="flex-1 justify-center items-center bg-[#1E1E1E] h-full" style={{ paddingBottom: insets.bottom }}>
         <LoadingSpinner />
-      </SafeAreaView>
+      </View>
     } else {
-      return <SafeAreaView className="flex-1 justify-center items-center bg-[#1E1E1E] h-full">
+      return <View className="flex-1 justify-center items-center bg-[#1E1E1E] h-full" style={{ paddingBottom: insets.bottom }}>
         <Text className="text-4xl font-bold mb-4 text-white">
           Welcome to Tabby
         </Text>
@@ -52,7 +53,7 @@ const WelcomeScreen = () => {
         >
           Get Started
         </Link>
-      </SafeAreaView>
+      </View>
     }
 
   };

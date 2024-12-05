@@ -136,6 +136,10 @@ const FooterNavBar = () => {
       }
     })
     console.log("\n\n \n\n \n selected book objects: ", selectedBookObjects, "\n \n\n \n\n \n\n \n");
+    // for the selected book objects set all ratings to 0
+    selectedBookObjects.forEach((book) => {
+      book.rating = 0;
+    });
 
     console.log("\n\n \n\n \n selected categories: ", selectedCategories, "\n \n\n \n\n \n\n \n");
 

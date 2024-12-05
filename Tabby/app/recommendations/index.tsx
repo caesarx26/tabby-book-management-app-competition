@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FlatList, Pressable, View, Text, Alert } from "react-native";
 import BookPreview from "@/components/BookPreview";
-import { SafeAreaView } from "react-native-safe-area-context";
 import AddButtonIcon from "@/components/AddButtonIcon";
 import { SearchBar } from "@rneui/themed";
 import {
@@ -999,7 +998,7 @@ const Recommendations = () => {
 
   const RecommendationsPage = () => {
     return (
-      <SafeAreaView className="flex-1">
+      <View className="flex-1">
         <View className=" flex-row items-center justify-between">
           {loadingSearchResults ? (
             <LoadingSpinner />
@@ -1123,7 +1122,7 @@ const Recommendations = () => {
           categories={categories}
           onConfirmAddBooks={handleAddSelectedBooksToCategories}
         />
-      </SafeAreaView>
+      </View>
     );
   };
 

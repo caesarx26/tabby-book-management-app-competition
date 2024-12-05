@@ -26,12 +26,12 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ visible, onClose, onConfirm }
     return (
         <Modal
             transparent={true}
-            animationType="slide"
+            animationType="fade"
             visible={visible}
             onRequestClose={onClose}
         >
             <TouchableWithoutFeedback onPress={onClose}>
-                <View className="flex-1 justify-center items-center">
+                <View className="flex-1 justify-center items-center bg-black/50">
                     <TouchableWithoutFeedback>
                         <View className="w-4/5 bg-white rounded-lg p-5">
                             <Text className="text-lg font-bold text-center mb-4">Delete Book</Text>

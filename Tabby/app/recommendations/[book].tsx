@@ -1,5 +1,4 @@
 import { View, Pressable, Text, ScrollView, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import BookCard from "@/components/book/BookCard";
 import ScrollableHorizontalList from "@/components/book/ScrollableHorizontalList";
@@ -176,7 +175,7 @@ const BookPage = () => {
     const BookPage = () => {
         return (
             <>
-                <SafeAreaView className="flex-1">
+                <View className="flex-1">
                     <View className="flex-row justify-end items-center">
                         <Pressable
                             className="p-1 mr-2"
@@ -248,7 +247,7 @@ const BookPage = () => {
                             </Text>
                         </ScrollView>
                     </View>
-                </SafeAreaView>
+                </View>
             </>
         );
     }

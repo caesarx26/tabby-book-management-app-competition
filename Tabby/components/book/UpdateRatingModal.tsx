@@ -29,7 +29,7 @@ const RateBookModal: React.FC<RateBookModalProps> = ({
     <Modal
       transparent
       visible={isVisible}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
       <View className="flex-1 justify-center items-center bg-black/50">
