@@ -48,7 +48,7 @@ export default function RootLayout() {
     return (
         <SafeAreaProvider testID="SafeAreaProvider">
             {/* Status bar appearance */}
-            <StatusBar style="light" backgroundColor="#1E1E1E" />
+            {/* <StatusBar style="light" backgroundColor="#1E1E1E" /> */}
             <Container testID="RootLayoutContainer">
                 <Suspense fallback={<Fallback />}>
                     <SQLiteProvider databaseName="bookCollection.db" onInit={migrateDbIfNeeded} useSuspense >
