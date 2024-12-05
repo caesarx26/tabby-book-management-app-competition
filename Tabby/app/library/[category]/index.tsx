@@ -655,6 +655,7 @@ const CategoryPage: React.FC = () => {
 
                                         <TextInput
                                             placeholder={item.placeholder}
+                                            placeholderTextColor="#C0C0C0"
                                             value={String(newCustomBook[item.field] ?? "")}  // Ensures it's a string
                                             onChangeText={(text) => handleInputChange(item.field, text)}
                                             className="border-b border-gray-300 p-2"

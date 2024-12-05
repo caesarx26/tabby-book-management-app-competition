@@ -98,77 +98,81 @@ const AddSearchResultsBooksModal: React.FC<AddSearchResultsBooksModalProps> = ({
             animationType="fade"
             onRequestClose={onClose}
         >
-            <View className="p-4 m-4 bg-white rounded-lg mx-auto w-80">
-                <Text className="text-lg text-black font-semibold mb-4">
-                    Select one or more books to add:
-                </Text>
-                {/* Display the list of books to be added */}
-                <FlatList
-                    style={{ maxHeight: dynamicStyles.FlatListMaxHeight }}
-                    data={booksToAdd}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => {
-                        const isSelected = selectedBooks.some((b) => b.id === item.id);
-                        return (
+            <View className='flex-1 bg-black/50 justify-center items-center'>
+                <View className="p-4 m-4 bg-white rounded-lg mx-auto w-80">
+                    <Text className="text-lg text-black font-semibold mb-4">
+                        Select one or more books to add:
+                    </Text>
+                    {/* Display the list of books to be added */}
+                    <FlatList
+                        style={{ maxHeight: dynamicStyles.FlatListMaxHeight }}
+                        data={booksToAdd}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item }) => {
+                            const isSelected = selectedBooks.some((b) => b.id === item.id);
+                            return (
+                                <Pressable
+                                    className={`flex-row items-center p-4 rounded-lg my-1 ${isSelected ? 'bg-blue-500 opacity-80' : ''}`}
+                                    onPress={() => toggleBookSelection(item)}
+                                >
+                                    <BookSearchPreview book={item} />
+                                </Pressable>
+                            );
+                        }}
+                    />
+
+                    <Text className="text-lg text-black font-semibold my-4">
+                        Select one or more categories to add selected books:
+                    </Text>
+
+                    {/* Category selection */}
+                    <FlatList
+                        className="max-h-28"
+                        data={categories}
+                        keyExtractor={(item) => item}
+                        renderItem={({ item }) => (
                             <Pressable
-                                className={`flex-row items-center p-4 rounded-lg my-1 ${isSelected ? 'bg-blue-500 opacity-80' : ''}`}
-                                onPress={() => toggleBookSelection(item)}
+                                onPress={() => toggleCategorySelection(item)}
+                                className="flex-row items-center mb-2 p-1"
                             >
-                                <BookSearchPreview book={item} />
+                                <Checkbox
+                                    value={selectedCategories.includes(item)}
+                                    onValueChange={() => toggleCategorySelection(item)}
+                                />
+                                <Text className="ml-2 text-sm text-gray-800">{item}</Text>
                             </Pressable>
-                        );
-                    }}
-                />
+                        )}
+                    />
 
-                <Text className="text-lg text-black font-semibold my-4">
-                    Select one or more categories to add selected books:
-                </Text>
+                    <View className='py-1'>
+                        {categoryErrorMessage.length > 0 && <Text className="text-red-500">{categoryErrorMessage}</Text>}
+                        {bookErrorMessage.length > 0 && <Text className="text-red-500">{bookErrorMessage}</Text>}
+                        {errorMessage.length > 0 && <Text className="text-red-500">{errorMessage}</Text>}
+                    </View>
 
-                {/* Category selection */}
-                <FlatList
-                    className="max-h-28"
-                    data={categories}
-                    keyExtractor={(item) => item}
-                    renderItem={({ item }) => (
-                        <Pressable
-                            onPress={() => toggleCategorySelection(item)}
-                            className="flex-row items-center mb-2 p-1"
-                        >
-                            <Checkbox
-                                value={selectedCategories.includes(item)}
-                                onValueChange={() => toggleCategorySelection(item)}
-                            />
-                            <Text className="ml-2 text-sm text-gray-800">{item}</Text>
-                        </Pressable>
-                    )}
-                />
+                    {loading ? <View className='h-20 w-full'><LoadingSpinner /></View>
+                        : <View className="flex-row justify-between mt-4">
+                            <Pressable
+                                className="px-4 py-2 bg-blue-500 rounded-lg"
+                                onPress={handleAddBooks}
+                            >
+                                <Text className="text-white">Confirm</Text>
+                            </Pressable>
+                            <Pressable
+                                className="px-4 py-2 mr-2 bg-gray-300 rounded-lg"
+                                onPress={onClose}
+                            >
+                                <Text className="text-gray-800">Cancel</Text>
+                            </Pressable>
+                        </View>}
 
-                <View className='py-1'>
-                    {categoryErrorMessage.length > 0 && <Text className="text-red-500">{categoryErrorMessage}</Text>}
-                    {bookErrorMessage.length > 0 && <Text className="text-red-500">{bookErrorMessage}</Text>}
-                    {errorMessage.length > 0 && <Text className="text-red-500">{errorMessage}</Text>}
+
+
+
                 </View>
 
-                {loading ? <View className='h-20 w-full'><LoadingSpinner /></View>
-                    : <View className="flex-row justify-between mt-4">
-                        <Pressable
-                            className="px-4 py-2 bg-blue-500 rounded-lg"
-                            onPress={handleAddBooks}
-                        >
-                            <Text className="text-white">Confirm</Text>
-                        </Pressable>
-                        <Pressable
-                            className="px-4 py-2 mr-2 bg-gray-300 rounded-lg"
-                            onPress={onClose}
-                        >
-                            <Text className="text-gray-800">Cancel</Text>
-                        </Pressable>
-                    </View>}
-
-
-
-
             </View>
+
         </Modal>
     );
 };

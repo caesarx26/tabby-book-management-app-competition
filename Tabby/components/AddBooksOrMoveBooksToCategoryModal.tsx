@@ -101,81 +101,84 @@ const AddBooksOrMoveBooksToCategoryModal: React.FC<AddBooksOrMoveBooksToCategory
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable className="flex-1" onPress={onClose}></Pressable>
+      <View className="flex-1 bg-black/50">
+        <Pressable className="flex-1" onPress={onClose}></Pressable>
 
-      <View className="p-4 m-4 bg-white rounded-lg mx-auto w-72">
-        <View className="">
-          {/* only render switch if possible to move books*/}
-          {isPossibleToMoveBooks && AddOrMoveSwitch()}
+        <View className="p-4 m-4 bg-white rounded-lg mx-auto w-72">
+          <View className="">
+            {/* only render switch if possible to move books*/}
+            {isPossibleToMoveBooks && AddOrMoveSwitch()}
 
-          <Text className="text-lg text-black font-semibold mb-4">
-            {isPossibleToMoveBooks
-              ? addOrMoveMessage()
-              : "Select one or more categories to add the selected books to:"}
+            <Text className="text-lg text-black font-semibold mb-4">
+              {isPossibleToMoveBooks
+                ? addOrMoveMessage()
+                : "Select one or more categories to add the selected books to:"}
+            </Text>
+          </View>
+
+          {/* Category selection */}
+          <FlatList
+            className="max-h-36"
+            data={categories}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() => toggleCategorySelection(item)}
+                className="flex-row items-center mb-2 p-1"
+              >
+                <Checkbox
+                  value={selectedCategories.includes(item)} // Ensure the checkbox reflects the selected state
+                  onValueChange={() => toggleCategorySelection(item)} // Toggle state properly
+                />
+                <Text className="ml-2 text-sm text-gray-800">{item}</Text>
+              </Pressable>
+            )}
+          />
+
+          {/* Display the list of books to be added */}
+          <Text className="font-semibold text-gray-800 mt-5 mb-2">
+            {addOrMoveBooks ? "Books to add:" : "Books to move:"}
           </Text>
-        </View>
+          <FlatList
+            className="max-h-36"
+            data={booksToAdd}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <View className="flex-row items-center b-2">
+                <Text className="text-sm text-gray-800">•{item.title} by {item.author}</Text>
+              </View>
+            )}
+          />
 
-        {/* Category selection */}
-        <FlatList
-          className="max-h-36"
-          data={categories}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => toggleCategorySelection(item)}
-              className="flex-row items-center mb-2 p-1"
-            >
-              <Checkbox
-                value={selectedCategories.includes(item)} // Ensure the checkbox reflects the selected state
-                onValueChange={() => toggleCategorySelection(item)} // Toggle state properly
-              />
-              <Text className="ml-2 text-sm text-gray-800">{item}</Text>
-            </Pressable>
+          {errorMessage.length > 0 && (
+            <Text className="text-red-500">{errorMessage}</Text>
           )}
-        />
 
-        {/* Display the list of books to be added */}
-        <Text className="font-semibold text-gray-800 mt-5 mb-2">
-          {addOrMoveBooks ? "Books to add:" : "Books to move:"}
-        </Text>
-        <FlatList
-          className="max-h-36"
-          data={booksToAdd}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View className="flex-row items-center b-2">
-              <Text className="text-sm text-gray-800">•{item.title} by {item.author}</Text>
+          {loading ? (
+            <View className="w-full h-20" testID="loading-spinner">
+              <LoadingSpinner />
+            </View>
+          ) : (
+            <View className="flex-row justify-between mt-4">
+              <Pressable
+                className="px-4 py-2 bg-blue-500 rounded-lg"
+                onPress={handleAddBooks}
+              >
+                <Text className="text-white">Confirm</Text>
+              </Pressable>
+              <Pressable
+                className="px-4 py-2 mr-2 bg-gray-300 rounded-lg"
+                onPress={onClose}
+              >
+                <Text className="text-gray-800">Cancel</Text>
+              </Pressable>
             </View>
           )}
-        />
+        </View>
 
-        {errorMessage.length > 0 && (
-          <Text className="text-red-500">{errorMessage}</Text>
-        )}
-
-        {loading ? (
-          <View className="w-full h-20" testID="loading-spinner">
-            <LoadingSpinner />
-          </View>
-        ) : (
-          <View className="flex-row justify-between mt-4">
-            <Pressable
-              className="px-4 py-2 bg-blue-500 rounded-lg"
-              onPress={handleAddBooks}
-            >
-              <Text className="text-white">Confirm</Text>
-            </Pressable>
-            <Pressable
-              className="px-4 py-2 mr-2 bg-gray-300 rounded-lg"
-              onPress={onClose}
-            >
-              <Text className="text-gray-800">Cancel</Text>
-            </Pressable>
-          </View>
-        )}
+        <Pressable className="flex-1" onPress={onClose}></Pressable>
       </View>
 
-      <Pressable className="flex-1" onPress={onClose}></Pressable>
     </Modal>
   );
 };

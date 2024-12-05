@@ -314,7 +314,7 @@ const CameraModal: React.FC<CameraModalProps> = ({ closeModal, onBookSelectionSt
     return (
         <Modal animationType="fade" transparent visible={!userChoosing}>
             <TouchableWithoutFeedback onPress={closeModal} disabled={isProcessing}>
-                <View className="flex-1 justify-center items-center">
+                <View className="flex-1 justify-center items-center bg-black/50">
                     <TouchableWithoutFeedback>
                         <View className="bg-white rounded-lg w-64 p-4 space-y-4">
                             {isProcessing && <ActivityIndicator size='large' color='#0000ff' />}
