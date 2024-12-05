@@ -3,7 +3,7 @@
 ```bash
 eas build --platform android --profile development
 ```
-## to make AAb for google play store
+## to make AAB for google play store
 ```bash
 eas build --platform android --profile production
 ```
