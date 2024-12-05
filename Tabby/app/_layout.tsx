@@ -10,6 +10,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { migrateDbIfNeeded } from '@/database/migration';
 import ArrowBackIcon from '@/assets/menu-icons/arrow-back-icon.svg';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from 'expo-status-bar';
 
 // Configure nativewind for web compatibility
 NativeWindStyleSheet.setOutput({
@@ -46,6 +47,8 @@ export default function RootLayout() {
 
     return (
         <SafeAreaProvider testID="SafeAreaProvider">
+            {/* Status bar appearance */}
+            <StatusBar style="light" backgroundColor="#1E1E1E" />
             <Container testID="RootLayoutContainer">
                 <Suspense fallback={<Fallback />}>
                     <SQLiteProvider databaseName="bookCollection.db" onInit={migrateDbIfNeeded} useSuspense >
