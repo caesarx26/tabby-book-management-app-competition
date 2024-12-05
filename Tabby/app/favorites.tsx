@@ -1,7 +1,6 @@
 import BookPreview from '@/components/BookPreview';
 import React, { useState, useEffect } from 'react';
 import { FlatList, Pressable, View, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import FavoriteButtonIcon from '@/components/FavoriteButtonIcon';
 import { SearchBar } from '@rneui/themed';
 import { Book } from "@/types/book";
@@ -65,7 +64,7 @@ const Favorites = () => {
     };
 
     return (
-        <SafeAreaView className="flex-1">
+        <View className="flex-1">
             <SearchBar placeholder="Search by title, author, genre, or isbn" onChangeText={updateSearch} value={search} />
             {(books && books.length === 0) &&
                 (<View className='flex-1 justify-center items-center'>
@@ -79,7 +78,7 @@ const Favorites = () => {
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}
             />
-        </SafeAreaView>
+        </View>
     );
 };
 

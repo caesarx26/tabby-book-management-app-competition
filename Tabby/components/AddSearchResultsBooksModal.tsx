@@ -78,6 +78,10 @@ const AddSearchResultsBooksModal: React.FC<AddSearchResultsBooksModalProps> = ({
 
         try {
             setLoading(true);
+            // make all selected books have a 0 rating as we are adding them to categories and should not have any rating once initially in category
+            selectedBooks.forEach((book) => {
+                book.rating = 0;
+            });
             const result = await onConfirmAddBooks(selectedBooks, selectedCategories);
             if (!result) setErrorMessage('Failed to add books to categories.');
             // reset selected categories and books
