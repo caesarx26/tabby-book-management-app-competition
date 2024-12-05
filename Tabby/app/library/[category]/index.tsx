@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import BookPreview from "@/components/BookPreview";
 import FavoriteButtonIcon from "@/components/FavoriteButtonIcon";
+import BookIcon from "@/components/BookIcon";
 import { SearchBar } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import {
@@ -34,6 +35,7 @@ import DeleteBooksModal from "@/components/DeleteBooksModal";
 import AddBooksOrMoveBooksToCategoryModal from "@/components/AddBooksOrMoveBooksToCategoryModal";
 
 import LoadingSpinner from "@/components/LoadingSpinner";
+import SelectedExplore from "@/components/navbar/selectedExplore";
 
 
 type SelectableBook = {
@@ -105,6 +107,130 @@ const CategoryPage: React.FC = () => {
         setNewCustomBook((prevState) => ({ ...prevState, [field]: value }));
     };
 
+    // state to track if filtering by favorite
+    const [isFilteringByFavorite, setIsFilteringByFavorite] = useState(false);
+    const [isFilteringByCustom, setIsFilteringByCustom] = useState(false);
+
+    // function to handle filtering books by custom or favorite or both
+    const handleFilteringBooksByFavorite = () => {
+        setLoadingSearch(true);
+
+        const filteredBooksByFlags = filteredBooksForSearch.filter((currentSelectableBook) => {
+            // favorite flag set so return true if favorite
+            if (currentSelectableBook.book.isFavorite) {
+                return true;
+            }
+
+            return false;
+        });
+
+
+
+        setFilteredBooksForSearch(filteredBooksByFlags);
+        setLoadingSearch(false);
+
+    }
+
+    // handle resetting filtering by favorite
+    const handleResetFilteringByFavorite = () => {
+
+        console.log("isFilteringByFavorite toggle: ", isFilteringByFavorite);
+
+        // set current filtered books with just search phrase 
+        updateSearch(search);
+
+        // check if not filtering by custom if so can just return early
+        if (!isFilteringByCustom) {
+            // setIsFilteringByFavorite(false);
+            return
+        }
+
+        // if filtering by custom we need to filter by custom
+        const filteredBooksByFlags = filteredBooksForSearch.filter((currentSelectableBook) => {
+            if (currentSelectableBook.book.isCustomBook) {
+                return true;
+            } return false;
+        })
+
+        setFilteredBooksForSearch(filteredBooksByFlags);
+
+
+    }
+
+    const handleFilteringBooksByCustom = () => {
+
+        const filteredBooksByFlags = filteredBooksForSearch.filter((currentSelectableBook) => {
+            // favorite flag set so return true if favorite
+            if (currentSelectableBook.book.isCustomBook) {
+                return true;
+            } return false;
+        });
+        setFilteredBooksForSearch(filteredBooksByFlags);
+
+    }
+
+    const handleResetFilteringByCustom = () => {
+
+        setIsFilteringByCustom((prev) => prev = false);
+
+        // set current filtered books with just search phrase 
+        updateSearch(search);
+
+        // check if not filtering by favorite if so can just return early
+        if (!isFilteringByFavorite) {
+            setIsFilteringByCustom(false);
+            return
+        }
+
+        // if filtering by favorite we need to filter by favorite
+        const filteredBooksByFlags = filteredBooksForSearch.filter((currentSelectableBook) => {
+            if (currentSelectableBook.book.isFavorite) {
+                return true;
+            } return false;
+        })
+
+        setFilteredBooksForSearch(filteredBooksByFlags);
+
+
+    }
+
+    // effect to handle filtering by favorite
+    useEffect(() => {
+        if (isFilteringByFavorite) {
+            handleFilteringBooksByFavorite();
+        } else {
+            console.log("\n\n else isFilteringByFavorite toggle: ", isFilteringByFavorite);
+            handleResetFilteringByFavorite();
+
+        }
+
+    }, [isFilteringByFavorite])
+
+    // effect to handle filtering by custom
+    useEffect(() => {
+        if (isFilteringByCustom) {
+            handleFilteringBooksByCustom();
+        } else {
+            handleResetFilteringByCustom();
+        }
+    }, [isFilteringByCustom])
+
+
+    const toggleFilteringByFavorite = () => {
+        if (isFilteringByFavorite) {
+            setIsFilteringByFavorite(false);
+        } else {
+            setIsFilteringByFavorite(true);
+        }
+    }
+
+    const toggleFilteringByCustom = () => {
+        if (isFilteringByCustom) {
+            setIsFilteringByCustom(false);
+        } else {
+            setIsFilteringByCustom(true);
+        }
+    }
 
     // Confirm Button Press
     const handleConfirmForAddingCustomBook = async () => {
@@ -381,6 +507,9 @@ const CategoryPage: React.FC = () => {
         setSearch(search);
         setLoadingSearch(true);
         deselectAllBooks();
+        console.log("search and favorite flag: ", search, " ", isFilteringByFavorite);
+
+
 
         const filteredBooks = selectableBooks.filter((currentSelectableBook) => {
             const genresAsArray = currentSelectableBook.book.genres?.split(",") || [];
@@ -394,6 +523,17 @@ const CategoryPage: React.FC = () => {
                 genresAsArray.some((genre) => genre.toLowerCase().includes(searchAsLowerCase)) ||
                 currentSelectableBook.book.isbn === filteredStringWithOnlyNumbers
             ) {
+                // check if filtering by favorite 
+                if (isFilteringByFavorite && !currentSelectableBook.book.isFavorite) {
+                    return false;
+
+                }
+
+                // check if filtering by custom 
+                if (isFilteringByCustom && !currentSelectableBook.book.isCustomBook) {
+                    return false;
+                }
+
                 return true;
             }
             return false;
@@ -567,8 +707,20 @@ const CategoryPage: React.FC = () => {
                     <ScrollView className="max-h-8">
                         <Text className="text-white text-xl font-bold text-left">{category}</Text>
                     </ScrollView>
-                    <View className="flex-row  ml-auto">
-                        <Pressable className="mr-1" onPress={() => selectAllFilteredBooksAndUpdateSelectableBooksToSelectTheFilteredBooks()}><SelectIcon height={35} width={35} /></Pressable>
+
+
+
+                    <View className="flex-row justify-end">
+                        <Pressable className="mr-5 p-1" onPress={() => toggleFilteringByFavorite()} >
+                            <FavoriteButtonIcon isFavorite={isFilteringByFavorite} size={35} />
+                        </Pressable>
+
+                        <Pressable className="mr-5 p-1" onPress={() => toggleFilteringByCustom()}>
+                            <BookIcon isCustom={isFilteringByCustom} size={35} />
+                        </Pressable>
+
+
+                        <Pressable className="mr-5 p-1" onPress={() => selectAllFilteredBooksAndUpdateSelectableBooksToSelectTheFilteredBooks()}><SelectIcon height={35} width={35} /></Pressable>
                     </View>
 
                 </View>
