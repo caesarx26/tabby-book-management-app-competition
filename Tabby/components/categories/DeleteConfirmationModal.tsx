@@ -33,66 +33,69 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ onCon
 
     return (
         <Modal
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             onRequestClose={onCancel}
         >
-            <Pressable
-                className="flex-1"
-                onPress={onCancel} // Close the modal when pressing outside the content
-            >
+            <View className='bg-black/50 flex-1'>
+                <Pressable
+                    className="flex-1"
+                    onPress={onCancel} // Close the modal when pressing outside the content
+                >
 
-            </Pressable>
+                </Pressable>
 
-            <View
-                className="mx-auto w-80 p-5 bg-white rounded-md z-10"
-            >
-                <Text className="text-lg font-bold mb-4 text-center">
-                    {onlySingleItemSelectedToDelete
-                        ? "Are you sure you want to delete this category?"
-                        : "Are you sure you want to delete the selected categories?"}
-                </Text>
-                <FlatList
-                    className='max-h-52'
-                    data={selectedCategories}
-                    keyExtractor={(item) => item.name}
-                    renderItem={({ item }) => (
-                        <Text className="text-center mb-2"> {item.name}</Text>
+                <View
+                    className="mx-auto w-80 p-5 bg-white rounded-md z-10"
+                >
+                    <Text className="text-lg font-bold mb-4 text-center">
+                        {onlySingleItemSelectedToDelete
+                            ? "Are you sure you want to delete this category?"
+                            : "Are you sure you want to delete the selected categories?"}
+                    </Text>
+                    <FlatList
+                        className='max-h-52'
+                        data={selectedCategories}
+                        keyExtractor={(item) => item.name}
+                        renderItem={({ item }) => (
+                            <Text className="text-center mb-2"> {item.name}</Text>
+                        )}
+                        showsVerticalScrollIndicator={true}
+                    />
+
+                    {errorMessage && (
+                        <Text className="text-red-500 text-center">{errorMessage}</Text>
                     )}
-                    showsVerticalScrollIndicator={true}
-                />
 
-                {errorMessage && (
-                    <Text className="text-red-500 text-center">{errorMessage}</Text>
-                )}
+                    {loading ? <View className='w-full h-10'>
+                        <LoadingSpinner />
 
-                {loading ? <View className='w-full h-10'>
-                    <LoadingSpinner />
-
-                </View> : <View className="flex-row justify-between mt-5">
-                    <Pressable
-                        onPress={handleConfirm}
-                        className="px-4 py-2 bg-red-500 rounded-md"
-                    >
-                        <Text className="text-white">Delete</Text>
-                    </Pressable>
-                    <Pressable
-                        onPress={onCancel}
-                        className="px-4 py-2 bg-gray-300 rounded-md"
-                    >
-                        <Text>Cancel</Text>
-                    </Pressable>
-                </View>}
+                    </View> : <View className="flex-row justify-between mt-5">
+                        <Pressable
+                            onPress={handleConfirm}
+                            className="px-4 py-2 bg-red-500 rounded-md"
+                        >
+                            <Text className="text-white">Delete</Text>
+                        </Pressable>
+                        <Pressable
+                            onPress={onCancel}
+                            className="px-4 py-2 bg-gray-300 rounded-md"
+                        >
+                            <Text>Cancel</Text>
+                        </Pressable>
+                    </View>}
 
 
 
 
+                </View>
+                <Pressable
+                    className="flex-1"
+                    onPress={onCancel} // Close the modal when pressing outside the content
+                >
+                </Pressable>
             </View>
-            <Pressable
-                className="flex-1"
-                onPress={onCancel} // Close the modal when pressing outside the content
-            >
-            </Pressable>
+
         </Modal>
     );
 };

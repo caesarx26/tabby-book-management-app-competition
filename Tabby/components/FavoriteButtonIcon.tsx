@@ -2,7 +2,7 @@ import React from 'react';
 import { Svg, Path } from 'react-native-svg';
 const FavoriteButtonIcon: React.FC<{ isFavorite: boolean, StrokeColor?: string }> = ({ isFavorite, StrokeColor }) => {
 
-    const fillColor = isFavorite ? "#660000" : "none";
+    const fillColor = isFavorite ? "#990000" : "transparent";
     const strokeColor = StrokeColor ? StrokeColor : "#33363F";
 
     const width = StrokeColor !== undefined && isFavorite ? 0 : 3;

@@ -93,73 +93,77 @@ const RenameModal: React.FC<RenameModalProps> = ({
     return (
         <Modal
             transparent={true}
-            animationType="slide"
+            animationType="fade"
             onRequestClose={handleCancel}
         >
-            {/* Backdrop */}
-            <Pressable
-                className="flex-1"
-                onPress={handleCancel} // Close the modal when clicking outside
-            >
-                {/* Empty Pressable ensures clicks outside are registered */}
-            </Pressable>
+            <View className='flex-1 bg-black/50 transition-colors'>
+                {/* Backdrop */}
+                <Pressable
+                    className="flex-1"
+                    onPress={handleCancel} // Close the modal when clicking outside
+                >
+                    {/* Empty Pressable ensures clicks outside are registered */}
+                </Pressable>
 
-            <View
-                className="mx-auto bg-white p-4 rounded w-80 z-10"            >
-                <Text className="text-lg font-semibold mb-2">
-                    {isAddingNewCategory ? "Add New Category" : renameLabel}
-                </Text>
+                <View
+                    className="mx-auto bg-white p-4 rounded w-80 z-10">
+                    <Text className="text-lg font-semibold mb-2">
+                        {isAddingNewCategory ? "Add New Category" : renameLabel}
+                    </Text>
 
-                <View>
+                    <View>
 
-                    <FlatList
-                        className='max-h-52'
-                        data={categoriesBeingRenamed}
-                        renderItem={({ item }) => (
-                            <Text className="mb-2">{categoriesBeingRenamed.length > 1 ? "• " : ""} {item.name}</Text>
-                        )}
-                        keyExtractor={(item) => item.name}
-                    />
+                        <FlatList
+                            className='max-h-52'
+                            data={categoriesBeingRenamed}
+                            renderItem={({ item }) => (
+                                <Text className="mb-2">{categoriesBeingRenamed.length > 1 ? "• " : ""} {item.name}</Text>
+                            )}
+                            keyExtractor={(item) => item.name}
+                        />
+
+                    </View>
+
+                    <ScrollView className='max-h-16'>
+                        <TextInput
+                            value={newName}
+                            onChangeText={handleChangeText}
+                            placeholder="Enter new category name"
+                            className="border p-2 mb-4"
+                            autoFocus={true}
+                            multiline={true}
+                        />
+                    </ScrollView>
+
+
+                    {errorMessage && (
+                        <Text className="text-red-500 mb-2">{errorMessage}</Text>
+                    )}
+
+                    {loading ? <View className='w-full h-10'>
+                        <LoadingSpinner />
+                    </View> : <View className="flex-row justify-between">
+                        <Pressable onPress={handleConfirm} className="bg-blue-500 px-4 p-2 rounded-md">
+                            <Text className="text-white">OK</Text>
+                        </Pressable>
+                        <Pressable onPress={handleCancel} className="px-4 py-2 bg-gray-300 rounded-md">
+                            <Text className="text-black">Cancel</Text>
+                        </Pressable>
+                    </View>}
+
+
+
 
                 </View>
+                <Pressable
+                    className="flex-1"
+                    onPress={handleCancel} // Close the modal when pressing outside the content
+                >
 
-                <ScrollView className='max-h-16'>
-                    <TextInput
-                        value={newName}
-                        onChangeText={handleChangeText}
-                        placeholder="Enter new category name"
-                        className="border p-2 mb-4"
-                        autoFocus={true}
-                        multiline={true}
-                    />
-                </ScrollView>
-
-
-                {errorMessage && (
-                    <Text className="text-red-500 mb-2">{errorMessage}</Text>
-                )}
-
-                {loading ? <View className='w-full h-10'>
-                    <LoadingSpinner />
-                </View> : <View className="flex-row justify-between">
-                    <Pressable onPress={handleConfirm} className="bg-blue-500 px-4 p-2 rounded-md">
-                        <Text className="text-white">OK</Text>
-                    </Pressable>
-                    <Pressable onPress={handleCancel} className="px-4 py-2 bg-gray-300 rounded-md">
-                        <Text className="text-black">Cancel</Text>
-                    </Pressable>
-                </View>}
-
-
-
+                </Pressable>
 
             </View>
-            <Pressable
-                className="flex-1"
-                onPress={handleCancel} // Close the modal when pressing outside the content
-            >
 
-            </Pressable>
         </Modal>
     );
 };

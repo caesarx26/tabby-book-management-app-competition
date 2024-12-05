@@ -21,12 +21,13 @@ const UpdateBookNotesModal = ({ visible, notes, onClose, onUpdateNotes }: Update
 
         <Modal visible={visible} animationType="slide" transparent={true}>
             <TouchableWithoutFeedback onPress={onClose}>
-                <View className="flex-1 justify-center items-center">
+                <View className="flex-1 justify-center items-center bg-black/50">
                     <TouchableWithoutFeedback >
                         <View className="bg-white p-5 w-4/5 rounded-lg">
 
                             <Text className="text-lg text-black">Update Notes</Text>
                             <TextInput
+                                placeholderTextColor="#C0C0C0"
                                 value={newNotes}
                                 onChangeText={setNewNotes}
                                 placeholder="Enter new notes"
