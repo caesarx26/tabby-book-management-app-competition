@@ -55,10 +55,11 @@ type FieldData = {
     placeholder: string;
     field: keyof NewCustomBook; // Ensures this matches the fields in NewCustomBook
     isMultiline: boolean;
+    validation?: (value: string) => boolean;
 };
 
 const data: FieldData[] = [
-    { key: "Add Title", placeholder: "title", field: "title", isMultiline: false, },
+    { key: "Add Title", placeholder: "title", field: "title", isMultiline: false, validation: (value: string) => value.trim() !== "" },
     { key: "Add Author", placeholder: "author", field: "author", isMultiline: false },
     { key: "Add Summary", placeholder: "summary", field: "summary", isMultiline: true },
     { key: "Add Excerpt", placeholder: "excerpt", field: "excerpt", isMultiline: true },
@@ -75,6 +76,7 @@ const CategoryPage: React.FC = () => {
     const [selectableBooks, setSelectableBooks] = useState<SelectableBook[]>(
         []
     );
+    const [errorCustomBookMessage, setErrorCustomBookMessage] = useState("");
     const [
         isAddingOrMovingBookModalVisible,
         setIsAddingOrMovingBookModalVisible,
@@ -94,12 +96,19 @@ const CategoryPage: React.FC = () => {
     });
 
     const handleInputChange = (field: keyof NewCustomBook, value: string) => {
+        if (field === "title" && value.trim() === "") {
+            setErrorCustomBookMessage("Title cannot be empty");
+        }
+        if (field === "title" && value.trim() !== "") {
+            setErrorCustomBookMessage("");
+        }
         setNewCustomBook((prevState) => ({ ...prevState, [field]: value }));
     };
 
 
     // Confirm Button Press
     const handleConfirmForAddingCustomBook = async () => {
+
         await handleAddCustomBook();
     };
 
@@ -487,6 +496,10 @@ const CategoryPage: React.FC = () => {
     }
 
     const handleAddCustomBook = async () => {
+        if (newCustomBook.title.trim() === "") {
+            setErrorCustomBookMessage("Title cannot be empty");
+            return false;
+        }
         const newCustomBookDataThatWillBeAdded: Book = {
             id: (selectableBooks.length + 1).toString() + newCustomBook.title,
             title: newCustomBook.title,
@@ -666,6 +679,7 @@ const CategoryPage: React.FC = () => {
                                 keyExtractor={(item) => item.key}
                                 className="max-h-52"
                             />
+                            {errorCustomBookMessage && <Text className="text-red-500">{errorCustomBookMessage}</Text>}
                             <View className="mt-4">
                                 <Pressable
                                     className="bg-blue-500 rounded p-2 mb-4"
