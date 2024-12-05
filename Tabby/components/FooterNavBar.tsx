@@ -239,7 +239,7 @@ const FooterNavBar = () => {
           }} />
       )}
       {isBookSelectionModalVisible && tempBooks.length > 0 && (
-        <Modal animationType="fade" transparent visible={isBookSelectionModalVisible}>
+        <Modal animationType="fade" transparent visible>
           <View className="flex-1 justify-center items-center bg-black/50">
             <View className="bg-white rounded-lg w-80 p-4 space-y-4 truncate">
               <Text className="text-xl font-bold text-center">Select The Correct Books</Text>
