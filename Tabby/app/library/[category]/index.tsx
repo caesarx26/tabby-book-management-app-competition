@@ -35,7 +35,6 @@ import DeleteBooksModal from "@/components/DeleteBooksModal";
 import AddBooksOrMoveBooksToCategoryModal from "@/components/AddBooksOrMoveBooksToCategoryModal";
 
 import LoadingSpinner from "@/components/LoadingSpinner";
-import SelectedExplore from "@/components/navbar/selectedExplore";
 
 
 type SelectableBook = {
@@ -145,15 +144,6 @@ const CategoryPage: React.FC = () => {
             return
         }
 
-        // if filtering by custom we need to filter by custom
-        const filteredBooksByFlags = filteredBooksForSearch.filter((currentSelectableBook) => {
-            if (currentSelectableBook.book.isCustomBook) {
-                return true;
-            } return false;
-        })
-
-        setFilteredBooksForSearch(filteredBooksByFlags);
-
 
     }
 
@@ -171,25 +161,16 @@ const CategoryPage: React.FC = () => {
 
     const handleResetFilteringByCustom = () => {
 
-        setIsFilteringByCustom((prev) => prev = false);
 
         // set current filtered books with just search phrase 
         updateSearch(search);
 
         // check if not filtering by favorite if so can just return early
         if (!isFilteringByFavorite) {
-            setIsFilteringByCustom(false);
             return
         }
 
-        // if filtering by favorite we need to filter by favorite
-        const filteredBooksByFlags = filteredBooksForSearch.filter((currentSelectableBook) => {
-            if (currentSelectableBook.book.isFavorite) {
-                return true;
-            } return false;
-        })
 
-        setFilteredBooksForSearch(filteredBooksByFlags);
 
 
     }
@@ -507,7 +488,8 @@ const CategoryPage: React.FC = () => {
         setSearch(search);
         setLoadingSearch(true);
         deselectAllBooks();
-        console.log("search and favorite flag: ", search, " ", isFilteringByFavorite);
+        console.log(`(search, favorite, custom): ${search}, ${isFilteringByFavorite}, ${isFilteringByCustom}`);
+
 
 
 
@@ -712,15 +694,15 @@ const CategoryPage: React.FC = () => {
 
                     <View className="flex-row justify-end">
                         <Pressable className="mr-5 p-1" onPress={() => toggleFilteringByFavorite()} >
-                            <FavoriteButtonIcon isFavorite={isFilteringByFavorite} size={35} />
+                            <FavoriteButtonIcon isFavorite={isFilteringByFavorite} StrokeColor="white" size={36} />
                         </Pressable>
 
                         <Pressable className="mr-5 p-1" onPress={() => toggleFilteringByCustom()}>
-                            <BookIcon isCustom={isFilteringByCustom} size={35} />
+                            <BookIcon isCustom={isFilteringByCustom} size={36} />
                         </Pressable>
 
 
-                        <Pressable className="mr-5 p-1" onPress={() => selectAllFilteredBooksAndUpdateSelectableBooksToSelectTheFilteredBooks()}><SelectIcon height={35} width={35} /></Pressable>
+                        <Pressable className="mr-5 p-1" onPress={() => selectAllFilteredBooksAndUpdateSelectableBooksToSelectTheFilteredBooks()}><SelectIcon height={36} width={36} /></Pressable>
                     </View>
 
                 </View>
