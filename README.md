@@ -1,4 +1,4 @@
-# 2024-F-GROUP1-Tabby
+# Tabby Book Management App
 
 App capable of reading text off of an image of a book and provide recomendations,
 and user compatability for that particular book.
