@@ -1,5 +1,5 @@
 // moved all files to my laptop and pushing from my laptop because no wifi at my house
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     FlatList,
     Pressable,
@@ -8,7 +8,8 @@ import {
     Alert,
     TextInput,
     Modal,
-    ScrollView
+    ScrollView,
+    Keyboard
 } from "react-native";
 import BookPreview from "@/components/BookPreview";
 import FavoriteButtonIcon from "@/components/FavoriteButtonIcon";
@@ -34,7 +35,6 @@ import SelectIcon from "@/assets/menu-icons/select-icon.svg";
 import MenuIcon from "@/components/book/MenuIcon";
 import DeleteBooksModal from "@/components/DeleteBooksModal";
 import AddBooksOrMoveBooksToCategoryModal from "@/components/AddBooksOrMoveBooksToCategoryModal";
-
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 
@@ -270,11 +270,15 @@ const CategoryPage: React.FC = () => {
         }
     }
 
-    // Confirm Button Press
-    const handleConfirmForAddingCustomBook = async () => {
+    const handleConfirmForAddingCustomBook = useCallback(async () => {
+        Keyboard.dismiss(); // Dismiss keyboard to ensure no pending state changes
+        // Rest of your logic
+        const success = await handleAddCustomBook();
+        if (!success) {
+            console.error("Failed to confirm adding custom book");
+        }
+    }, [newCustomBook]);
 
-        await handleAddCustomBook();
-    };
 
 
     // function to check if any books are selected
@@ -695,19 +699,17 @@ const CategoryPage: React.FC = () => {
             return false;
         }
 
-        if (errorCustomBookMessage !== "") {
-            return false;
-        }
+
         const newCustomBookDataThatWillBeAdded: Book = {
             id: (selectableBooks.length + 1).toString() + newCustomBook.title,
             title: newCustomBook.title,
-            author: newCustomBook.author,
-            summary: newCustomBook.summary,
-            excerpt: newCustomBook.excerpt,
+            author: newCustomBook.author || "",
+            summary: newCustomBook.summary || "",
+            excerpt: newCustomBook.excerpt || "",
             image: "",
             rating: 0,
             pageCount: newCustomBook.pageCount || 0,
-            notes: newCustomBook.notes,
+            notes: newCustomBook.notes || "",
             genres: "",
             category: category as string,
             isFavorite: false,
@@ -939,6 +941,7 @@ const CategoryPage: React.FC = () => {
                         <View className="flex-1 justify-center items-center">
                             <View className="w-4/5 p-6 bg-white rounded-lg">
                                 <FlatList
+                                    extraData={newCustomBook} // Ensures FlatList updates when newCustomBook changes
                                     data={data}
                                     renderItem={({ item }) => (
                                         <View className="mb-4">
