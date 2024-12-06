@@ -159,7 +159,7 @@ const FooterNavBar = () => {
       //reset local state of selectable books
       Alert.alert("Successfully added selected books to all selected categories");
     } else {
-      console.error("Failed to add selected books to all categories");
+      console.error("Failed to add selected books to all categories.");
     }
 
     // refresh current category page if selected books will be added to current category and are in that category page

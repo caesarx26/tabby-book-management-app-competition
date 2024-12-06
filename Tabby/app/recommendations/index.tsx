@@ -532,11 +532,11 @@ const getBooksFromServerBasedOnSearch = async (
       return convertApiResponseToBooks(response.data);
     } else {
       console.error("Unexpected response status:", response.status);
-      return [];
+      throw new Error("Book search failed");
     }
   } catch (error) {
     console.error("Error fetching books from server:", error);
-    return [];
+    throw new Error("Book search failed");
   }
 };
 
@@ -589,7 +589,7 @@ const Recommendations = () => {
         return true;
       }
 
-      Alert.alert("Failed to add book to all categories");
+      Alert.alert("Failed to add book to all categories.");
       return false;
     } catch (error) {
       console.error("Error adding books to categories:", error);
@@ -605,7 +605,7 @@ const Recommendations = () => {
       search.length > maxLimitOfCharactersForSearch
     ) {
       Alert.alert(
-        `Search must be between 1 and ${maxLimitOfCharactersForSearch} characters`
+        `Search must be between 1 and ${maxLimitOfCharactersForSearch} characters.`
       );
       setSearch("");
       return;
@@ -624,6 +624,7 @@ const Recommendations = () => {
           setIsSearchResultsModalVisible(true);
         }
       } catch (error) {
+        Alert.alert("Error occurred while getting search results.");
         console.error("Error getting search results from api", error);
       } finally {
         setLoadingSearchResults(false);
@@ -705,7 +706,7 @@ const Recommendations = () => {
       setFilteredBooksForSearchInRecommendations([...selectableBooksToAdd]);
     } catch (error) {
       console.log("Error getting recommended books from api", error);
-      Alert.alert("Error occurred while getting new recommended books");
+      Alert.alert("Error occurred while getting new recommended books.");
     } finally {
       setLoadingRecommendations(false);
     }
@@ -768,7 +769,7 @@ const Recommendations = () => {
         setFilteredBooksForSearchInRecommendations([...selectableBooksToAdd]);
       } catch (error) {
         console.log("Error getting recommended books from api", error);
-        Alert.alert("Error occurred while getting new recommended books");
+        Alert.alert("Error occurred while getting new recommended books.");
         throw error;
       }
     };

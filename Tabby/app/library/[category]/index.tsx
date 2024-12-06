@@ -98,12 +98,13 @@ const CategoryPage: React.FC = () => {
     });
 
     const handleInputChange = (field: keyof NewCustomBook, value: string) => {
-        if (field === "title" && value.trim() === "") {
-            setErrorCustomBookMessage("Title cannot be empty");
-        }
         if (field === "title" && value.trim() !== "") {
             setErrorCustomBookMessage("");
         }
+        if (field === "title" && value.trim() === "") {
+            setErrorCustomBookMessage("Title cannot be empty");
+        }
+
         setNewCustomBook((prevState) => ({ ...prevState, [field]: value }));
     };
 
@@ -693,6 +694,10 @@ const CategoryPage: React.FC = () => {
             setErrorCustomBookMessage("Title cannot be empty");
             return false;
         }
+
+        if (errorCustomBookMessage !== "") {
+            return false;
+        }
         const newCustomBookDataThatWillBeAdded: Book = {
             id: (selectableBooks.length + 1).toString() + newCustomBook.title,
             title: newCustomBook.title,
@@ -957,6 +962,7 @@ const CategoryPage: React.FC = () => {
                                 <View className="mt-4">
                                     <Pressable
                                         className="bg-blue-500 rounded p-2 mb-4"
+                                        disabled={errorCustomBookMessage !== ""}
                                         onPress={() => handleConfirmForAddingCustomBook()}
                                     >
                                         <Text className="text-white text-center">Confirm</Text>
