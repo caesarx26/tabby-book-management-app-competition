@@ -13,8 +13,31 @@ load_dotenv()  # Loads .env if not loaded already
 
 _MAX_RESULTS = 40
 """Maximum number of results returned by Google Books"""
-_API_KEY = os.getenv("GOOGLE_CLOUD_API_KEY", "")
-"""API key to get Google Books"""
+
+
+def _get_api_keys() -> tuple[str, ...]:
+    """Gets the API keys for Google Books.
+
+    Returns:
+        Tuple of API keys.
+    """
+    keys: list[str]
+    if keys_str := os.getenv("GOOGLE_CLOUD_API_KEYS", "").strip():
+        keys = [k.strip() for k in keys_str.split(",")]
+    else:
+        keys = [os.getenv("GOOGLE_CLOUD_API_KEY", "")]
+    if keys[0] == "":
+        logging.info("Warning: No Google Cloud keys given.")
+    return tuple(keys)
+
+
+_API_KEYS: tuple[str, ...] = _get_api_keys()
+
+
+logging.info(f"API keys: {_API_KEYS}")
+
+# _API_KEY = os.getenv("GOOGLE_CLOUD_API_KEY", "")
+# """API key to get Google Books"""
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -179,6 +202,10 @@ def volume_info_to_book(volume_info: dict[str, Any]) -> Book:
     )
 
 
+request_count: int = 0
+"""Number of requests since the start of this server."""
+
+
 def request_volumes_get(
     phrase: str = "",
     title: str = "",
@@ -201,6 +228,10 @@ def request_volumes_get(
     Returns:
         List of Book objects collected from Google Books.
     """
+    global request_count
+
+    if _API_KEYS[0] == "":
+        logging.info("Warning: No Google Cloud API keys specified.")
 
     # Assemble query to search
     query = get_google_books_query(
@@ -214,14 +245,32 @@ def request_volumes_get(
     logging.info(f"Query: {query!r}")
 
     # Invoke Google Books with the assembled query
-    response = requests.get(
-        url="https://www.googleapis.com/books/v1/volumes",
-        params={
-            "key": _API_KEY,
-            "q": query,
-            "maxResults": _MAX_RESULTS,
-        },
-    )
+    for i in range(len(_API_KEYS)):  # Attempt for each key
+        response = requests.get(
+            url="https://www.googleapis.com/books/v1/volumes",
+            params={
+                "key": _API_KEYS[(request_count + i) % len(_API_KEYS)],
+                "q": query,
+                "maxResults": _MAX_RESULTS,
+            },
+        )
+
+        if response.status_code == 429:  # Rate limited, try next key
+            logging.info("Rate limited, trying next key...")
+            # Log JSON if available
+            try:
+                response_json = response.json()
+            except requests.exceptions.JSONDecodeError:
+                response_json = ""
+            if response_json:
+                logging.info("JSON:")
+                logging.info(pformat(response_json))
+            continue
+
+        # Success
+        logging.info(f"Request count: {request_count}")
+        request_count += 1
+        break
 
     # Catch bad responses
     if not (200 <= response.status_code <= 299):
