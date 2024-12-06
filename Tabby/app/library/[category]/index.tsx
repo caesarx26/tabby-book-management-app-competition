@@ -31,7 +31,7 @@ import DeleteIcon from "@/assets/menu-icons/delete-icon.svg";
 import AddSquareIcon from "@/assets/menu-icons/add-square-icon.svg";
 import CancelIcon from "@/assets/menu-icons/cancel-icon.svg";
 import SelectIcon from "@/assets/menu-icons/select-icon.svg";
-import CategorySelectIcon from "@/assets/menu-icons/category-select-icon.svg";
+import MenuIcon from "@/components/book/MenuIcon";
 import DeleteBooksModal from "@/components/DeleteBooksModal";
 import AddBooksOrMoveBooksToCategoryModal from "@/components/AddBooksOrMoveBooksToCategoryModal";
 
@@ -128,8 +128,13 @@ const CategoryPage: React.FC = () => {
         }
         if (isSortingByRating) {
             books = books.sort(
-                (a, b) => (a.book.rating < b.book.rating) ? 1 : -1
+                (a, b) => {
+                    const ratingA = a.book.rating ?? -Infinity; // Default to -Infinity if undefined
+                    const ratingB = b.book.rating ?? -Infinity; // Default to -Infinity if undefined
+                    return ratingA < ratingB ? 1 : -1;
+                }
             );
+
         }
 
         return books;
@@ -222,30 +227,30 @@ const CategoryPage: React.FC = () => {
     }, [isFilteringByCustom])
 
     // effect to sort books
-//     useEffect(() => {
-//         if (isSortingByTitle) {
-//             const sorted = filteredBooksForSearch.sort(
-//                 (a, b) => (a.book.title < b.book.title) ? -1 : 1
-//             );
-//             setFilteredBooksForSearch(sorted);
-//         }
-//     }, [isSortingByTitle]);
-//     useEffect(() => {
-//         if (isSortingByAuthor) {
-//             const sorted = filteredBooksForSearch.sort(
-//                 (a, b) => (a.book.author < b.book.author) ? -1 : 1
-//             );
-//             setFilteredBooksForSearch(sorted);
-//         }
-//     }, [isSortingByAuthor]);
-//     useEffect(() => {
-//         if (isSortingByRating) {
-//             const sorted = filteredBooksForSearch.sort(
-//                 (a, b) => (a.book.rating < b.book.rating) ? 1 : -1
-//             );
-//             setFilteredBooksForSearch(sorted);
-//         }
-//     }, [isSortingByRating]);
+    //     useEffect(() => {
+    //         if (isSortingByTitle) {
+    //             const sorted = filteredBooksForSearch.sort(
+    //                 (a, b) => (a.book.title < b.book.title) ? -1 : 1
+    //             );
+    //             setFilteredBooksForSearch(sorted);
+    //         }
+    //     }, [isSortingByTitle]);
+    //     useEffect(() => {
+    //         if (isSortingByAuthor) {
+    //             const sorted = filteredBooksForSearch.sort(
+    //                 (a, b) => (a.book.author < b.book.author) ? -1 : 1
+    //             );
+    //             setFilteredBooksForSearch(sorted);
+    //         }
+    //     }, [isSortingByAuthor]);
+    //     useEffect(() => {
+    //         if (isSortingByRating) {
+    //             const sorted = filteredBooksForSearch.sort(
+    //                 (a, b) => (a.book.rating < b.book.rating) ? 1 : -1
+    //             );
+    //             setFilteredBooksForSearch(sorted);
+    //         }
+    //     }, [isSortingByRating]);
 
 
     const toggleFilteringByFavorite = () => {
@@ -728,6 +733,11 @@ const CategoryPage: React.FC = () => {
         return true;
     };
 
+    // function to handle when sorting states change
+    const handleResettingFiltering = () => {
+        updateSearch(search);
+    }
+
     return (
 
         <View className="flex-1">
@@ -759,8 +769,8 @@ const CategoryPage: React.FC = () => {
 
 
                     <View className="flex-row justify-end">
-                        <Pressable className="mr-5 p-1" onPress={() => setSortModalVisible(true)} >
-                            <CategorySelectIcon height={36} width={36} />
+                        <Pressable className="mr-5" onPress={() => setSortModalVisible(true)} >
+                            <MenuIcon isSelected={sortModalVisible} />
                         </Pressable>
 
                         <Pressable className="mr-5 p-1" onPress={() => toggleFilteringByFavorite()} >
@@ -858,7 +868,6 @@ const CategoryPage: React.FC = () => {
                     visible={sortModalVisible}
                     onRequestClose={() => setSortModalVisible(false)}
                 >
-
                     {/* close modal on background tap */}
                     <Pressable className="flex-1" onPress={() => setSortModalVisible(false)}></Pressable>
                     <View className="flex-1 justify-center items-center">
@@ -890,23 +899,27 @@ const CategoryPage: React.FC = () => {
                                     <Text className="text-white text-center">Currently sorting by Author</Text>
                                 </Pressable>}
                                 {!isSortingByRating && <Pressable
-                                    className="bg-blue-500 rounded p-2"
+                                    className="bg-blue-500 rounded p-2 mb-4"
                                     onPress={() => setIsSortingByRating(true)}
                                 >
                                     <Text className="text-white text-center">Sort by Rating</Text>
                                 </Pressable>}
                                 {isSortingByRating && <Pressable
-                                    className="bg-green-500 rounded p-2"
+                                    className="bg-green-500 rounded p-2 mb-4"
                                     onPress={() => setIsSortingByRating(false)}
                                 >
                                     <Text className="text-white text-center">Currently sorting by Rating</Text>
                                 </Pressable>}
+
+                                <Pressable className="bg-red-500 rounded p-2" onPress={() => { setIsSortingByTitle(false); setIsSortingByAuthor(false); setIsSortingByRating(false); handleResettingFiltering(); }}>
+                                    <Text className="text-white text-center">Reset</Text>
+                                </Pressable>
                             </View>
 
                         </View>
                     </View>
                     {/* close modal on background tap */}
-                    <Pressable className="flex-1" onPress={() => setAddCustomBookModalVisible(false)}></Pressable>
+                    <Pressable className="flex-1" onPress={() => setSortModalVisible(false)}></Pressable>
                 </Modal>
 
                 {/* Add Custom Book Modal */}
