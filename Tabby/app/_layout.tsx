@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { View, Pressable, Text } from 'react-native';
+import { View, Pressable, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { Slot, useRouter, usePathname } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SQLiteProvider } from 'expo-sqlite';
@@ -46,22 +46,32 @@ export default function RootLayout() {
             <Container testID="RootLayoutContainer">
                 <Suspense fallback={<Fallback />}>
                     <SQLiteProvider databaseName="bookCollection.db" onInit={migrateDbIfNeeded} useSuspense >
-                        <ContentContainer testID="ContentContainer">
-                            {!isWelcomePage && (
 
-                                <View className="flex-row justify-start items-center space-x-5 pb-1" style={{ paddingTop: insets.top }} >
-                                    <BackButton />
-                                    <Text className="text-white text-2xl font-bold">Tabby</Text>
-                                </View>
-                            )}
-                            <Slot />
-                        </ContentContainer>
-                        {!isWelcomePage &&
-                            <View testID="FooterNavBar" style={{ paddingBottom: insets.bottom }}>
-                                <FooterNavBar />
-                            </View>}
+                        <KeyboardAvoidingView
+                            style={{ flex: 1 }}
+                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                            keyboardVerticalOffset={insets.bottom}
+                        >
+                            <ContentContainer testID="ContentContainer">
+                                {!isWelcomePage && (
+
+                                    <View className="flex-row justify-start items-center space-x-5 pb-1" style={{ paddingTop: insets.top }} >
+                                        <BackButton />
+                                        <Text className="text-white text-2xl font-bold">Tabby</Text>
+                                    </View>
+                                )}
+                                <Slot />
+                            </ContentContainer>
+
+                        </KeyboardAvoidingView>
+
                     </SQLiteProvider>
                 </Suspense>
+
+                {!isWelcomePage &&
+                    <View testID="FooterNavBar" style={{ paddingBottom: insets.bottom }}>
+                        <FooterNavBar />
+                    </View>}
             </Container>
         </SafeAreaProvider>
     );
