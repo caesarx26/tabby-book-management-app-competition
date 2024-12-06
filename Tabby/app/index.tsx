@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, Image } from "react-native";
 import { Link } from "expo-router";
 import { getAllCategories } from "@/database/databaseOperations";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const WelcomeScreen = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   // will check if there are any categories if there are some no need to welcome user as they have used the app before
   useEffect(() => {
     try {
@@ -32,7 +32,6 @@ const WelcomeScreen = () => {
     }
   }, [router]);
 
-
   const handleShowingLoading = () => {
     if (isLoading) {
       return <View className="flex-1 justify-center items-center bg-[#1E1E1E] h-full" style={{ paddingBottom: insets.bottom }}>
@@ -43,6 +42,7 @@ const WelcomeScreen = () => {
         <Text className="text-4xl font-bold mb-4 text-white">
           Welcome to Tabby
         </Text>
+        <Image source={require("@/assets/icons/app/adaptive-icon.png")} className="w-48 h-48" testID="settings-image" />
         <Text className="text-lg text-center mb-8 text-white">
           Scan books and store your book information effortlessly.
         </Text>
@@ -53,12 +53,11 @@ const WelcomeScreen = () => {
         >
           Get Started
         </Link>
+        <Image source={require("@/assets/icons/app/sleeping_cat_3.png")} className="w-48 h-48 bottom-0 inset-x-0" testID="settings-image" />
       </View>
     }
 
   };
-
-
 
   return (
     <>
