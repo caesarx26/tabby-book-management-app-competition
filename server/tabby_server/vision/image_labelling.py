@@ -160,7 +160,7 @@ def find_books(tensor_image=None) -> list[dict[str, Any]]:
     # Leaves behind no physical trace.
     output = model(
         source=tensor_image,  # Given image matrix
-        conf=0.45,  # Minimum accepted confidence
+        conf=0.6,  # Minimum accepted confidence
         save_conf=True,  # Save Confidence to output
         classes=[0],  # What objects it looks for
     )
