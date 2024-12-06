@@ -222,7 +222,7 @@ const FooterNavBar = () => {
       <Link href="/settings" asChild>
         <Pressable className="flex-col mx-auto">
           <Settings />
-          <Text className="text-center text-white">Settings</Text>
+          <Text className="text-center text-white">Analytics</Text>
         </Pressable>
       </Link>
 
