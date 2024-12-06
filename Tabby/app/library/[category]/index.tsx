@@ -784,54 +784,57 @@ const CategoryPage: React.FC = () => {
 
                 {/* Add Custom Book Modal */}
                 <Modal
-                    animationType="slide"
+                    animationType="fade"
                     transparent={true}
                     visible={addCustomBookModalVisible}
                     onRequestClose={() => setAddCustomBookModalVisible(false)}
                 >
-                    {/* close modal on background tap */}
-                    <Pressable className="flex-1" onPress={() => setAddCustomBookModalVisible(false)}></Pressable>
-                    <View className="flex-1 justify-center items-center">
-                        <View className="w-4/5 p-6 bg-white rounded-lg">
-                            <FlatList
-                                data={data}
-                                renderItem={({ item }) => (
-                                    <View className="mb-4">
-                                        <Text className="text-lg font-medium mb-2">{item.key}</Text>
+                    <View className="flex-1 bg-black/50">
+                        <Pressable className="flex-1" onPress={() => setAddCustomBookModalVisible(false)}></Pressable>
+                        <View className="flex-1 justify-center items-center">
+                            <View className="w-4/5 p-6 bg-white rounded-lg">
+                                <FlatList
+                                    data={data}
+                                    renderItem={({ item }) => (
+                                        <View className="mb-4">
+                                            <Text className="text-lg font-medium mb-2">{item.key}</Text>
 
-                                        <TextInput
-                                            placeholder={item.placeholder}
-                                            placeholderTextColor="#C0C0C0"
-                                            value={String(newCustomBook[item.field] ?? "")}  // Ensures it's a string
-                                            onChangeText={(text) => handleInputChange(item.field, text)}
-                                            className="border-b border-gray-300 p-2"
-                                            multiline={item.isMultiline}
-                                            numberOfLines={item.isMultiline ? 4 : 1}
-                                        />
-                                    </View>
-                                )}
-                                keyExtractor={(item) => item.key}
-                                className="max-h-52"
-                            />
-                            {errorCustomBookMessage && <Text className="text-red-500">{errorCustomBookMessage}</Text>}
-                            <View className="mt-4">
-                                <Pressable
-                                    className="bg-blue-500 rounded p-2 mb-4"
-                                    onPress={handleConfirmForAddingCustomBook}
-                                >
-                                    <Text className="text-white text-center">Confirm</Text>
-                                </Pressable>
-                                <Pressable
-                                    className="bg-red-500 rounded p-2"
-                                    onPress={() => setAddCustomBookModalVisible(false)}
-                                >
-                                    <Text className="text-white text-center">Cancel</Text>
-                                </Pressable>
+                                            <TextInput
+                                                placeholder={item.placeholder}
+                                                placeholderTextColor="#C0C0C0"
+                                                value={String(newCustomBook[item.field] ?? "")}  // Ensures it's a string
+                                                onChangeText={(text) => handleInputChange(item.field, text)}
+                                                className="border-b border-gray-300 p-2"
+                                                multiline={item.isMultiline}
+                                                numberOfLines={item.isMultiline ? 4 : 1}
+                                            />
+                                        </View>
+                                    )}
+                                    keyExtractor={(item) => item.key}
+                                    className="max-h-52"
+                                />
+                                {errorCustomBookMessage && <Text className="text-red-500">{errorCustomBookMessage}</Text>}
+                                <View className="mt-4">
+                                    <Pressable
+                                        className="bg-blue-500 rounded p-2 mb-4"
+                                        onPress={() => handleConfirmForAddingCustomBook()}
+                                    >
+                                        <Text className="text-white text-center">Confirm</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        className="bg-red-500 rounded p-2"
+                                        onPress={() => setAddCustomBookModalVisible(false)}
+                                    >
+                                        <Text className="text-white text-center">Cancel</Text>
+                                    </Pressable>
+                                </View>
                             </View>
                         </View>
+                        {/* close modal on background tap */}
+                        <Pressable className="flex-1" onPress={() => setAddCustomBookModalVisible(false)}></Pressable>
                     </View>
                     {/* close modal on background tap */}
-                    <Pressable className="flex-1" onPress={() => setAddCustomBookModalVisible(false)}></Pressable>
+
                 </Modal>
             </>}
 

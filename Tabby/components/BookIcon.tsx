@@ -2,7 +2,7 @@
 import { Svg, Path } from 'react-native-svg';
 
 const BookIcon: React.FC<{ isCustom: boolean, size?: number }> = ({ isCustom, size }) => {
-    const strokeColor = isCustom ? "#ffffff" : "#D3D3D3";
+    const strokeColor = isCustom ? "#57d356" : "#ffffff";
     return (
 
         <Svg width="36" height="36" viewBox="0 0 24 24" fill="none" >
