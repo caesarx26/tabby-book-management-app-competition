@@ -965,9 +965,10 @@ const Recommendations = () => {
 
       setIsAddingBookModalVisible(false);
 
-      // if add button was pressed reset it to false after adding it
+      // if add button was pressed reset it to false after adding it and also deselect all books
       if (pressedAddBookToLibraryButtonFromBookPreview) {
         setPressedAddBookToLibraryButtonFromBookPreview(false);
+        deselectAllBooks();
       }
 
       Alert.alert("Successfully added selected books to all categories");

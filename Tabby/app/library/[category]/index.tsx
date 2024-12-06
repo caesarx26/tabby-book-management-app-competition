@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import BookPreview from "@/components/BookPreview";
 import FavoriteButtonIcon from "@/components/FavoriteButtonIcon";
+import BookIcon from "@/components/BookIcon";
 import { SearchBar } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import {
@@ -55,10 +56,11 @@ type FieldData = {
     placeholder: string;
     field: keyof NewCustomBook; // Ensures this matches the fields in NewCustomBook
     isMultiline: boolean;
+    validation?: (value: string) => boolean;
 };
 
 const data: FieldData[] = [
-    { key: "Add Title", placeholder: "title", field: "title", isMultiline: false, },
+    { key: "Add Title", placeholder: "title", field: "title", isMultiline: false, validation: (value: string) => value.trim() !== "" },
     { key: "Add Author", placeholder: "author", field: "author", isMultiline: false },
     { key: "Add Summary", placeholder: "summary", field: "summary", isMultiline: true },
     { key: "Add Excerpt", placeholder: "excerpt", field: "excerpt", isMultiline: true },
@@ -75,6 +77,7 @@ const CategoryPage: React.FC = () => {
     const [selectableBooks, setSelectableBooks] = useState<SelectableBook[]>(
         []
     );
+    const [errorCustomBookMessage, setErrorCustomBookMessage] = useState("");
     const [
         isAddingOrMovingBookModalVisible,
         setIsAddingOrMovingBookModalVisible,
@@ -94,12 +97,125 @@ const CategoryPage: React.FC = () => {
     });
 
     const handleInputChange = (field: keyof NewCustomBook, value: string) => {
+        if (field === "title" && value.trim() === "") {
+            setErrorCustomBookMessage("Title cannot be empty");
+        }
+        if (field === "title" && value.trim() !== "") {
+            setErrorCustomBookMessage("");
+        }
         setNewCustomBook((prevState) => ({ ...prevState, [field]: value }));
     };
 
+    // state to track if filtering by favorite
+    const [isFilteringByFavorite, setIsFilteringByFavorite] = useState(false);
+    const [isFilteringByCustom, setIsFilteringByCustom] = useState(false);
+
+    // function to handle filtering books by custom or favorite or both
+    const handleFilteringBooksByFavorite = () => {
+        setLoadingSearch(true);
+
+        const filteredBooksByFlags = filteredBooksForSearch.filter((currentSelectableBook) => {
+            // favorite flag set so return true if favorite
+            if (currentSelectableBook.book.isFavorite) {
+                return true;
+            }
+
+            return false;
+        });
+
+
+
+        setFilteredBooksForSearch(filteredBooksByFlags);
+        setLoadingSearch(false);
+
+    }
+
+    // handle resetting filtering by favorite
+    const handleResetFilteringByFavorite = () => {
+
+        console.log("isFilteringByFavorite toggle: ", isFilteringByFavorite);
+
+        // set current filtered books with just search phrase 
+        updateSearch(search);
+
+        // check if not filtering by custom if so can just return early
+        if (!isFilteringByCustom) {
+            // setIsFilteringByFavorite(false);
+            return
+        }
+
+
+    }
+
+    const handleFilteringBooksByCustom = () => {
+
+        const filteredBooksByFlags = filteredBooksForSearch.filter((currentSelectableBook) => {
+            // favorite flag set so return true if favorite
+            if (currentSelectableBook.book.isCustomBook) {
+                return true;
+            } return false;
+        });
+        setFilteredBooksForSearch(filteredBooksByFlags);
+
+    }
+
+    const handleResetFilteringByCustom = () => {
+
+
+        // set current filtered books with just search phrase 
+        updateSearch(search);
+
+        // check if not filtering by favorite if so can just return early
+        if (!isFilteringByFavorite) {
+            return
+        }
+
+
+
+
+    }
+
+    // effect to handle filtering by favorite
+    useEffect(() => {
+        if (isFilteringByFavorite) {
+            handleFilteringBooksByFavorite();
+        } else {
+            console.log("\n\n else isFilteringByFavorite toggle: ", isFilteringByFavorite);
+            handleResetFilteringByFavorite();
+
+        }
+
+    }, [isFilteringByFavorite])
+
+    // effect to handle filtering by custom
+    useEffect(() => {
+        if (isFilteringByCustom) {
+            handleFilteringBooksByCustom();
+        } else {
+            handleResetFilteringByCustom();
+        }
+    }, [isFilteringByCustom])
+
+
+    const toggleFilteringByFavorite = () => {
+        if (isFilteringByFavorite) {
+            setIsFilteringByFavorite(false);
+        } else {
+            setIsFilteringByFavorite(true);
+        }
+    }
+
+    const toggleFilteringByCustom = () => {
+        if (isFilteringByCustom) {
+            setIsFilteringByCustom(false);
+        } else {
+            setIsFilteringByCustom(true);
+        }
+    }
 
     // Confirm Button Press
     const handleConfirmForAddingCustomBook = async () => {
+
         await handleAddCustomBook();
     };
 
@@ -372,6 +488,10 @@ const CategoryPage: React.FC = () => {
         setSearch(search);
         setLoadingSearch(true);
         deselectAllBooks();
+        console.log(`(search, favorite, custom): ${search}, ${isFilteringByFavorite}, ${isFilteringByCustom}`);
+
+
+
 
         const filteredBooks = selectableBooks.filter((currentSelectableBook) => {
             const genresAsArray = currentSelectableBook.book.genres?.split(",") || [];
@@ -385,6 +505,17 @@ const CategoryPage: React.FC = () => {
                 genresAsArray.some((genre) => genre.toLowerCase().includes(searchAsLowerCase)) ||
                 currentSelectableBook.book.isbn === filteredStringWithOnlyNumbers
             ) {
+                // check if filtering by favorite 
+                if (isFilteringByFavorite && !currentSelectableBook.book.isFavorite) {
+                    return false;
+
+                }
+
+                // check if filtering by custom 
+                if (isFilteringByCustom && !currentSelectableBook.book.isCustomBook) {
+                    return false;
+                }
+
                 return true;
             }
             return false;
@@ -487,6 +618,10 @@ const CategoryPage: React.FC = () => {
     }
 
     const handleAddCustomBook = async () => {
+        if (newCustomBook.title.trim() === "") {
+            setErrorCustomBookMessage("Title cannot be empty");
+            return false;
+        }
         const newCustomBookDataThatWillBeAdded: Book = {
             id: (selectableBooks.length + 1).toString() + newCustomBook.title,
             title: newCustomBook.title,
@@ -554,8 +689,20 @@ const CategoryPage: React.FC = () => {
                     <ScrollView className="max-h-8">
                         <Text className="text-white text-xl font-bold text-left">{category}</Text>
                     </ScrollView>
-                    <View className="flex-row  ml-auto">
-                        <Pressable className="mr-1" onPress={() => selectAllFilteredBooksAndUpdateSelectableBooksToSelectTheFilteredBooks()}><SelectIcon height={35} width={35} /></Pressable>
+
+
+
+                    <View className="flex-row justify-end">
+                        <Pressable className="mr-5 p-1" onPress={() => toggleFilteringByFavorite()} >
+                            <FavoriteButtonIcon isFavorite={isFilteringByFavorite} StrokeColor="white" size={36} />
+                        </Pressable>
+
+                        <Pressable className="mr-5 p-1" onPress={() => toggleFilteringByCustom()}>
+                            <BookIcon isCustom={isFilteringByCustom} size={36} />
+                        </Pressable>
+
+
+                        <Pressable className="mr-5 p-1" onPress={() => selectAllFilteredBooksAndUpdateSelectableBooksToSelectTheFilteredBooks()}><SelectIcon height={36} width={36} /></Pressable>
                     </View>
 
                 </View>
@@ -637,53 +784,57 @@ const CategoryPage: React.FC = () => {
 
                 {/* Add Custom Book Modal */}
                 <Modal
-                    animationType="slide"
+                    animationType="fade"
                     transparent={true}
                     visible={addCustomBookModalVisible}
                     onRequestClose={() => setAddCustomBookModalVisible(false)}
                 >
-                    {/* close modal on background tap */}
-                    <Pressable className="flex-1" onPress={() => setAddCustomBookModalVisible(false)}></Pressable>
-                    <View className="flex-1 justify-center items-center">
-                        <View className="w-4/5 p-6 bg-white rounded-lg">
-                            <FlatList
-                                data={data}
-                                renderItem={({ item }) => (
-                                    <View className="mb-4">
-                                        <Text className="text-lg font-medium mb-2">{item.key}</Text>
+                    <View className="flex-1 bg-black/50">
+                        <Pressable className="flex-1" onPress={() => setAddCustomBookModalVisible(false)}></Pressable>
+                        <View className="flex-1 justify-center items-center">
+                            <View className="w-4/5 p-6 bg-white rounded-lg">
+                                <FlatList
+                                    data={data}
+                                    renderItem={({ item }) => (
+                                        <View className="mb-4">
+                                            <Text className="text-lg font-medium mb-2">{item.key}</Text>
 
-                                        <TextInput
-                                            placeholder={item.placeholder}
-                                            placeholderTextColor="#C0C0C0"
-                                            value={String(newCustomBook[item.field] ?? "")}  // Ensures it's a string
-                                            onChangeText={(text) => handleInputChange(item.field, text)}
-                                            className="border-b border-gray-300 p-2"
-                                            multiline={item.isMultiline}
-                                            numberOfLines={item.isMultiline ? 4 : 1}
-                                        />
-                                    </View>
-                                )}
-                                keyExtractor={(item) => item.key}
-                                className="max-h-52"
-                            />
-                            <View className="mt-4">
-                                <Pressable
-                                    className="bg-blue-500 rounded p-2 mb-4"
-                                    onPress={handleConfirmForAddingCustomBook}
-                                >
-                                    <Text className="text-white text-center">Confirm</Text>
-                                </Pressable>
-                                <Pressable
-                                    className="bg-red-500 rounded p-2"
-                                    onPress={() => setAddCustomBookModalVisible(false)}
-                                >
-                                    <Text className="text-white text-center">Cancel</Text>
-                                </Pressable>
+                                            <TextInput
+                                                placeholder={item.placeholder}
+                                                placeholderTextColor="#C0C0C0"
+                                                value={String(newCustomBook[item.field] ?? "")}  // Ensures it's a string
+                                                onChangeText={(text) => handleInputChange(item.field, text)}
+                                                className="border-b border-gray-300 p-2"
+                                                multiline={item.isMultiline}
+                                                numberOfLines={item.isMultiline ? 4 : 1}
+                                            />
+                                        </View>
+                                    )}
+                                    keyExtractor={(item) => item.key}
+                                    className="max-h-52"
+                                />
+                                {errorCustomBookMessage && <Text className="text-red-500">{errorCustomBookMessage}</Text>}
+                                <View className="mt-4">
+                                    <Pressable
+                                        className="bg-blue-500 rounded p-2 mb-4"
+                                        onPress={() => handleConfirmForAddingCustomBook()}
+                                    >
+                                        <Text className="text-white text-center">Confirm</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        className="bg-red-500 rounded p-2"
+                                        onPress={() => setAddCustomBookModalVisible(false)}
+                                    >
+                                        <Text className="text-white text-center">Cancel</Text>
+                                    </Pressable>
+                                </View>
                             </View>
                         </View>
+                        {/* close modal on background tap */}
+                        <Pressable className="flex-1" onPress={() => setAddCustomBookModalVisible(false)}></Pressable>
                     </View>
                     {/* close modal on background tap */}
-                    <Pressable className="flex-1" onPress={() => setAddCustomBookModalVisible(false)}></Pressable>
+
                 </Modal>
             </>}
 

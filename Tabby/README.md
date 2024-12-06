@@ -1,3 +1,13 @@
+# for building app for android 
+## to make apk for testing
+```bash
+eas build --platform android --profile development
+```
+## to make AAB for google play store
+```bash
+eas build --platform android --profile production
+```
+
 # Before setting up project 😢
 This is what you need to do before getting started with the app like installing
 the package manager and wsl. 
