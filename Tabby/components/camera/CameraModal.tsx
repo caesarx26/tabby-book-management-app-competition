@@ -189,13 +189,16 @@ const CameraModal: React.FC<CameraModalProps> = ({ closeModal, onBookSelectionSt
                 console.error("error uploading image: ", books.status);
                 const errorText = await books.text();
                 console.error("Error details: ", errorText);
+                Alert.alert("Failed to upload image. Please try again");
             }
-            if (returnedBooks.length === 0) {
+            // show error if no books were found on an okay response
+            if (returnedBooks.length === 0 && books.ok) {
                 Alert.alert("No books found. Please try again");
             }
             return returnedBooks;
         } catch (error) {
             console.error("Catch Error uploading image:", error);
+            Alert.alert("Failed to upload image. Please try again");
         }
     }
 
@@ -275,8 +278,9 @@ const CameraModal: React.FC<CameraModalProps> = ({ closeModal, onBookSelectionSt
                     console.error("error uploading author and title: ", response.status);
                     const errorText = await response.text();
                     console.error("Error details: ", errorText);
+                    Alert.alert("Something went wrong with uploading author and title. Please try again.");
                 }
-                if (returnedBooks.length === 0) {
+                if (returnedBooks.length === 0 && response.ok) {
                     Alert.alert("No books found. Please try again");
                 }
                 return returnedBooks;
@@ -284,9 +288,12 @@ const CameraModal: React.FC<CameraModalProps> = ({ closeModal, onBookSelectionSt
                 console.error("error uploading image: ", titles.status);
                 const errorText = await titles.text();
                 console.error("Error details: ", errorText);
+                Alert.alert("Something went wrong with uploading image. Please try again.");
             }
         } catch (error) {
             console.error("Error uploading image:", error);
+            Alert.alert("Something went wrong. Please try again.");
+
         }
     };
 
