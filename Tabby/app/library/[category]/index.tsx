@@ -1,5 +1,5 @@
 // moved all files to my laptop and pushing from my laptop because no wifi at my house
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     FlatList,
     Pressable,
@@ -8,7 +8,8 @@ import {
     Alert,
     TextInput,
     Modal,
-    ScrollView
+    ScrollView,
+    Keyboard
 } from "react-native";
 import BookPreview from "@/components/BookPreview";
 import FavoriteButtonIcon from "@/components/FavoriteButtonIcon";
@@ -31,9 +32,9 @@ import DeleteIcon from "@/assets/menu-icons/delete-icon.svg";
 import AddSquareIcon from "@/assets/menu-icons/add-square-icon.svg";
 import CancelIcon from "@/assets/menu-icons/cancel-icon.svg";
 import SelectIcon from "@/assets/menu-icons/select-icon.svg";
+import MenuIcon from "@/components/book/MenuIcon";
 import DeleteBooksModal from "@/components/DeleteBooksModal";
 import AddBooksOrMoveBooksToCategoryModal from "@/components/AddBooksOrMoveBooksToCategoryModal";
-
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 
@@ -97,18 +98,48 @@ const CategoryPage: React.FC = () => {
     });
 
     const handleInputChange = (field: keyof NewCustomBook, value: string) => {
-        if (field === "title" && value.trim() === "") {
-            setErrorCustomBookMessage("Title cannot be empty");
-        }
         if (field === "title" && value.trim() !== "") {
             setErrorCustomBookMessage("");
         }
+        if (field === "title" && value.trim() === "") {
+            setErrorCustomBookMessage("Title cannot be empty");
+        }
+
         setNewCustomBook((prevState) => ({ ...prevState, [field]: value }));
     };
 
     // state to track if filtering by favorite
     const [isFilteringByFavorite, setIsFilteringByFavorite] = useState(false);
     const [isFilteringByCustom, setIsFilteringByCustom] = useState(false);
+    const [isSortingByTitle, setIsSortingByTitle] = useState(false);
+    const [isSortingByAuthor, setIsSortingByAuthor] = useState(false);
+    const [isSortingByRating, setIsSortingByRating] = useState(false);
+
+    // function to sort books
+    const sortBooks = (books: SelectableBook[]) => {
+        if (isSortingByTitle) {
+            books = books.sort(
+                (a, b) => (a.book.title < b.book.title) ? -1 : 1
+            );
+        }
+        if (isSortingByAuthor) {
+            books = books.sort(
+                (a, b) => (a.book.author < b.book.author) ? -1 : 1
+            );
+        }
+        if (isSortingByRating) {
+            books = books.sort(
+                (a, b) => {
+                    const ratingA = a.book.rating ?? -Infinity; // Default to -Infinity if undefined
+                    const ratingB = b.book.rating ?? -Infinity; // Default to -Infinity if undefined
+                    return ratingA < ratingB ? 1 : -1;
+                }
+            );
+
+        }
+
+        return books;
+    };
 
     // function to handle filtering books by custom or favorite or both
     const handleFilteringBooksByFavorite = () => {
@@ -135,7 +166,7 @@ const CategoryPage: React.FC = () => {
 
         console.log("isFilteringByFavorite toggle: ", isFilteringByFavorite);
 
-        // set current filtered books with just search phrase 
+        // set current filtered books with just search phrase
         updateSearch(search);
 
         // check if not filtering by custom if so can just return early
@@ -162,7 +193,7 @@ const CategoryPage: React.FC = () => {
     const handleResetFilteringByCustom = () => {
 
 
-        // set current filtered books with just search phrase 
+        // set current filtered books with just search phrase
         updateSearch(search);
 
         // check if not filtering by favorite if so can just return early
@@ -196,6 +227,32 @@ const CategoryPage: React.FC = () => {
         }
     }, [isFilteringByCustom])
 
+    // effect to sort books
+    //     useEffect(() => {
+    //         if (isSortingByTitle) {
+    //             const sorted = filteredBooksForSearch.sort(
+    //                 (a, b) => (a.book.title < b.book.title) ? -1 : 1
+    //             );
+    //             setFilteredBooksForSearch(sorted);
+    //         }
+    //     }, [isSortingByTitle]);
+    //     useEffect(() => {
+    //         if (isSortingByAuthor) {
+    //             const sorted = filteredBooksForSearch.sort(
+    //                 (a, b) => (a.book.author < b.book.author) ? -1 : 1
+    //             );
+    //             setFilteredBooksForSearch(sorted);
+    //         }
+    //     }, [isSortingByAuthor]);
+    //     useEffect(() => {
+    //         if (isSortingByRating) {
+    //             const sorted = filteredBooksForSearch.sort(
+    //                 (a, b) => (a.book.rating < b.book.rating) ? 1 : -1
+    //             );
+    //             setFilteredBooksForSearch(sorted);
+    //         }
+    //     }, [isSortingByRating]);
+
 
     const toggleFilteringByFavorite = () => {
         if (isFilteringByFavorite) {
@@ -213,11 +270,15 @@ const CategoryPage: React.FC = () => {
         }
     }
 
-    // Confirm Button Press
-    const handleConfirmForAddingCustomBook = async () => {
+    const handleConfirmForAddingCustomBook = useCallback(async () => {
+        Keyboard.dismiss(); // Dismiss keyboard to ensure no pending state changes
+        // Rest of your logic
+        const success = await handleAddCustomBook();
+        if (!success) {
+            console.error("Failed to confirm adding custom book");
+        }
+    }, [newCustomBook]);
 
-        await handleAddCustomBook();
-    };
 
 
     // function to check if any books are selected
@@ -302,6 +363,9 @@ const CategoryPage: React.FC = () => {
 
 
     const [addCustomBookModalVisible, setAddCustomBookModalVisible] = useState(false);
+
+    const [sortModalVisible, setSortModalVisible] = useState(false);
+
 
     const [search, setSearch] = useState("");
     const [filteredBooksForSearch, setFilteredBooksForSearch] = useState(selectableBooks);
@@ -490,9 +554,21 @@ const CategoryPage: React.FC = () => {
         deselectAllBooks();
         console.log(`(search, favorite, custom): ${search}, ${isFilteringByFavorite}, ${isFilteringByCustom}`);
 
-
-
-
+        /*
+        let sortedBooks: SelectableBook[] = selectableBooks;
+        if (isSortingByTitle) {
+            console.log("Sorting by title");
+            sortedBooks = sortedBooks.sort((a, b) => (a.book.title < b.book.title) ? -1 : 1);
+        }
+        if (isSortingByAuthor) {
+            console.log("Sorting by author");
+            sortedBooks = sortedBooks.sort((sb) => sb.book.author);
+        }
+        console.log("Sorted books:");
+        for (let i = 0; i < sortedBooks.length; i++) {
+            console.log(`  ${sortedBooks[i].book.title}`);
+        }
+        */
         const filteredBooks = selectableBooks.filter((currentSelectableBook) => {
             const genresAsArray = currentSelectableBook.book.genres?.split(",") || [];
             const searchAsLowerCase = trimmedSearch.toLowerCase();
@@ -505,13 +581,13 @@ const CategoryPage: React.FC = () => {
                 genresAsArray.some((genre) => genre.toLowerCase().includes(searchAsLowerCase)) ||
                 currentSelectableBook.book.isbn === filteredStringWithOnlyNumbers
             ) {
-                // check if filtering by favorite 
+                // check if filtering by favorite
                 if (isFilteringByFavorite && !currentSelectableBook.book.isFavorite) {
                     return false;
 
                 }
 
-                // check if filtering by custom 
+                // check if filtering by custom
                 if (isFilteringByCustom && !currentSelectableBook.book.isCustomBook) {
                     return false;
                 }
@@ -622,16 +698,18 @@ const CategoryPage: React.FC = () => {
             setErrorCustomBookMessage("Title cannot be empty");
             return false;
         }
+
+
         const newCustomBookDataThatWillBeAdded: Book = {
             id: (selectableBooks.length + 1).toString() + newCustomBook.title,
             title: newCustomBook.title,
-            author: newCustomBook.author,
-            summary: newCustomBook.summary,
-            excerpt: newCustomBook.excerpt,
+            author: newCustomBook.author || "",
+            summary: newCustomBook.summary || "",
+            excerpt: newCustomBook.excerpt || "",
             image: "",
             rating: 0,
             pageCount: newCustomBook.pageCount || 0,
-            notes: newCustomBook.notes,
+            notes: newCustomBook.notes || "",
             genres: "",
             category: category as string,
             isFavorite: false,
@@ -654,13 +732,18 @@ const CategoryPage: React.FC = () => {
             { book: resultOfAddingCustomBook, isSelected: false },
             ...filteredBooksForSearch,
         ])
-        // resetting custom book if added 
+        // resetting custom book if added
         setNewCustomBook({ title: '', author: '', summary: '', excerpt: '', pageCount: null, notes: '' });
         Alert.alert("Custom book added successfully!");
         // reset new custom book state
         setAddCustomBookModalVisible(false);
         return true;
     };
+
+    // function to handle when sorting states change
+    const handleResettingFiltering = () => {
+        updateSearch(search);
+    }
 
     return (
 
@@ -693,6 +776,10 @@ const CategoryPage: React.FC = () => {
 
 
                     <View className="flex-row justify-end">
+                        <Pressable className="mr-5" onPress={() => setSortModalVisible(true)} >
+                            <MenuIcon isSelected={sortModalVisible} />
+                        </Pressable>
+
                         <Pressable className="mr-5 p-1" onPress={() => toggleFilteringByFavorite()} >
                             <FavoriteButtonIcon isFavorite={isFilteringByFavorite} StrokeColor="white" size={36} />
                         </Pressable>
@@ -713,7 +800,7 @@ const CategoryPage: React.FC = () => {
                 </View>
                 ) : (
                     <FlatList
-                        data={filteredBooksForSearch}
+                        data={sortBooks(filteredBooksForSearch)}
                         keyExtractor={(item) => item.book.id}
                         renderItem={({ item }) => (
                             <BookPreview
@@ -782,6 +869,66 @@ const CategoryPage: React.FC = () => {
                     onConfirmMoveBooks={handleMovingSelectedBooksToCategories}
                 />
 
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={sortModalVisible}
+                    onRequestClose={() => setSortModalVisible(false)}
+                >
+                    {/* close modal on background tap */}
+                    <Pressable className="flex-1" onPress={() => setSortModalVisible(false)}></Pressable>
+                    <View className="flex-1 justify-center items-center">
+                        <View className="w-4/5 p-6 bg-white rounded-lg">
+
+                            <View className="mt-4">
+                                {!isSortingByTitle && <Pressable
+                                    className="bg-blue-500 rounded p-2 mb-4"
+                                    onPress={() => setIsSortingByTitle(true)}
+                                >
+                                    <Text className="text-white text-center">Sort by Title</Text>
+                                </Pressable>}
+                                {isSortingByTitle && <Pressable
+                                    className="bg-green-500 rounded p-2 mb-4"
+                                    onPress={() => setIsSortingByTitle(false)}
+                                >
+                                    <Text className="text-white text-center">Currently sorting by Title</Text>
+                                </Pressable>}
+                                {!isSortingByAuthor && <Pressable
+                                    className="bg-blue-500 rounded p-2 mb-4"
+                                    onPress={() => setIsSortingByAuthor(true)}
+                                >
+                                    <Text className="text-white text-center">Sort by Author</Text>
+                                </Pressable>}
+                                {isSortingByAuthor && <Pressable
+                                    className="bg-green-500 rounded p-2 mb-4"
+                                    onPress={() => setIsSortingByAuthor(false)}
+                                >
+                                    <Text className="text-white text-center">Currently sorting by Author</Text>
+                                </Pressable>}
+                                {!isSortingByRating && <Pressable
+                                    className="bg-blue-500 rounded p-2 mb-4"
+                                    onPress={() => setIsSortingByRating(true)}
+                                >
+                                    <Text className="text-white text-center">Sort by Rating</Text>
+                                </Pressable>}
+                                {isSortingByRating && <Pressable
+                                    className="bg-green-500 rounded p-2 mb-4"
+                                    onPress={() => setIsSortingByRating(false)}
+                                >
+                                    <Text className="text-white text-center">Currently sorting by Rating</Text>
+                                </Pressable>}
+
+                                <Pressable className="bg-red-500 rounded p-2" onPress={() => { setIsSortingByTitle(false); setIsSortingByAuthor(false); setIsSortingByRating(false); handleResettingFiltering(); }}>
+                                    <Text className="text-white text-center">Reset</Text>
+                                </Pressable>
+                            </View>
+
+                        </View>
+                    </View>
+                    {/* close modal on background tap */}
+                    <Pressable className="flex-1" onPress={() => setSortModalVisible(false)}></Pressable>
+                </Modal>
+
                 {/* Add Custom Book Modal */}
                 <Modal
                     animationType="fade"
@@ -794,6 +941,7 @@ const CategoryPage: React.FC = () => {
                         <View className="flex-1 justify-center items-center">
                             <View className="w-4/5 p-6 bg-white rounded-lg">
                                 <FlatList
+                                    extraData={newCustomBook} // Ensures FlatList updates when newCustomBook changes
                                     data={data}
                                     renderItem={({ item }) => (
                                         <View className="mb-4">
@@ -817,6 +965,7 @@ const CategoryPage: React.FC = () => {
                                 <View className="mt-4">
                                     <Pressable
                                         className="bg-blue-500 rounded p-2 mb-4"
+                                        disabled={errorCustomBookMessage !== ""}
                                         onPress={() => handleConfirmForAddingCustomBook()}
                                     >
                                         <Text className="text-white text-center">Confirm</Text>
