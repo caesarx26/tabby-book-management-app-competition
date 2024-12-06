@@ -3,7 +3,7 @@ import { Image } from "react-native";
 import { useEffect, useState } from 'react';
 import { getAllFavoriteUserBooks, getAllCategories, getAllUserBooksByCategory } from "@/database/databaseOperations";
 
-const Settings = () => {
+const Analytics = () => {
     const [numFavorites, setNumFavorites] = useState(0);
     const [numCategories, setNumCategories] = useState(0);
     const [numBooks, setNumBooks] = useState(0);
@@ -89,4 +89,4 @@ const Settings = () => {
     )
 }
 
-export default Settings;
+export default Analytics;
