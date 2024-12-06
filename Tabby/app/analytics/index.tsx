@@ -1,9 +1,9 @@
-import { View, Text } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import { Image } from "react-native";
 import { useEffect, useState } from 'react';
 import { getAllFavoriteUserBooks, getAllCategories, getAllUserBooksByCategory } from "@/database/databaseOperations";
 
-const Settings = () => {
+const Analytics = () => {
     const [numFavorites, setNumFavorites] = useState(0);
     const [numCategories, setNumCategories] = useState(0);
     const [numBooks, setNumBooks] = useState(0);
@@ -42,17 +42,51 @@ const Settings = () => {
         });
     }, []);
 
+
+    const categoryPhrase = () => {
+        if (numCategories === 1) {
+            return 'category.';
+        } else {
+            return 'categories!';
+
+        }
+    }
+
+    const favoritePhrase = () => {
+        if (numFavorites === 1) {
+            return 'liked book';
+        } else {
+            return 'liked books';
+        }
+    };
+
+    const bookPhrase = () => {
+        if (numBooks === 1) {
+            return 'book.';
+        } else {
+            return 'total books!';
+        }
+    };
+
     return (
-        <View className="flex-1">
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+
+
             <View className="flex-1 justify-center items-center px-1">
-                <Text className="text-2xl font-bold text-white py-2 text-center">You have {numFavorites} favorited books!</Text>
-                <Text className="text-2xl font-bold text-white py-2 text-center">You have {numCategories} categories!</Text>
-                <Text className="text-2xl font-bold text-white py-2 text-center">You have {numBooks} total books!</Text>
-                <Text className="text-2xl font-bold text-white py-2 text-center">Your category with the most books is {mostBookCategory}!</Text>
+                {(numFavorites === 0) ? <Text className="text-2xl font-bold text-white py-2 text-center">You have no liked books ...</Text> : ((<Text className="text-2xl font-bold text-white py-2 text-center">You have {numFavorites} {favoritePhrase()}</Text>)
+                )}
+                <Text className="text-2xl font-bold text-white py-2 text-center">You have {numCategories} {categoryPhrase()}</Text>
+                {(numBooks === 0) ? <Text className="text-2xl font-bold text-white py-2 text-center">You have no books ...</Text> : ((<Text className="text-2xl font-bold text-white py-2 text-center">You have {numBooks} {bookPhrase()}</Text>)
+                )}
+
+                {
+                    mostBookCategory !== '' && (<Text className="text-2xl font-bold text-white py-2 text-center max-w-sm">Your category with the most books is {mostBookCategory}!</Text>
+
+                    )}
                 <Image source={require("@/assets/icons/app/adaptive-icon.png")} className="w-64 h-64" testID="settings-image" />
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
-export default Settings;
+export default Analytics;
