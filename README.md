@@ -21,14 +21,13 @@ Tabby is a cross-platform app designed to help users manage their physical book 
   - Communicate seamlessly with the backend for online searches and book scanning results.  
 
 - **User-Centric Design:**  
-  - Intuitive frontend built with **Figma** designs, featuring modals and filtering for easy navigation.  
+  - Intuitive frontend built with [**Figma**](https://www.figma.com/design/wSHr0xTngDT3UgoleCXozN/Team-Library?node-id=0-1&p=f&t=LYvJK3GJ9NfiiOZ8-0) designs, featuring modals and filtering for easy navigation.  
   - Optimized endpoints for smooth backend integration and fast data retrieval.  
 
-Tabby was developed collaboratively, with significant contributions to the frontend, local storage, API integrations, and backend communication design.
-
-
-`Tabby/` is for the front-end mobile application, and `server/` is for the
+---
+- `Tabby/` is for the front-end mobile application, and `server/` is for the
 back-end server.
+---
 
 Please refer to `Tabby/README.md` for documentation on the front-end and
 `server/README.md` for documentation on the backend.
