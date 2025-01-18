@@ -8,6 +8,9 @@ eas build --platform android --profile development
 eas build --platform android --profile production
 ```
 
+# for building app for ios 
+- apple developer account needed and $99 every year to keep :cry:
+
 # Before setting up project 😢
 This is what you need to do before getting started with the app like installing
 the package manager and wsl. 
