@@ -296,7 +296,13 @@ The following environment variables are optional and do not need to specified.
   - `0`: Filter off.
 
 # Koyeb Deployment
-Koyeb is a web hosting service offering CPU and GPU instances. The current project will be using a GPU instance needed because the server will have to perform some intense processing for image and character recognition.
+Koyeb is a web hosting service offering CPU and GPU instances. The current project will be need a GPU instance needed because the server will have to perform some intense processing for image and character recognition. 
+- note that it is necessary that the instance is in the US since the google books api will only get books based on the server's IP address
+- **Otheriwse** you can make **2** web services one service that has a GPU that can be located anywhere and another that is based in the US no GPU required
+- The GPU instance will be used for the YOLO and OCR processing. Make sure it has enough space to store the project and dependencies around 10GB
+- The CPU instance will be used for the searches, no scanning (again make sure it has enough space to store project around 10GB)
+- GPU instance will be used to handle scan_cover and scan_shelf with the query param nosearch=anyvalue (just return titles and authors found no book info)
+- CPU/Cheaper instance will be used to handle search (after getting titles and authors or online search) also recommendations 
 
 ![Koyeb Overview page](./../.github/assets/koyeb_overview.png)
 
@@ -327,7 +333,7 @@ What type of instance do we need? Should it have access to the internet or not.
 ![Koyeb Service Type](./../.github/assets/koyeb_service_type.png)
 
 ### Source
-Where should Koyeb go to find the source code? An option of using github repos or a Docker image file is avalible. Currently, it is using a forked version of the source code which is a "private" directory. We will have to change this to be the correct public repository later. Auto deploy should be avalible for both public and private repsitorys.
+Where should Koyeb go to find the source code? An option of using github repos or a Docker image file is avalible. Currently, it is using the public version of this directory. Auto deploy should be avalible for both public and private repsitorys.
 
 ![Koyeb Source Directory](./../.github/assets/koyeb_source.png)
 
