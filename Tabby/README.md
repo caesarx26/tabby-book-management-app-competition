@@ -1,4 +1,11 @@
 # for building app for android 
+- make sure to configure your env variables in the eas.json for development and production
+```json
+ "env": {
+        "EXPO_PUBLIC_CPU_US_API_URL": "https://examplecpu.com",
+        "EXPO_PUBLIC_GPU_API_URL": "https://examplegpu.com"
+      }
+```
 ## to make apk for testing
 ```bash
 eas build --platform android --profile development
@@ -86,6 +93,15 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 - after cloning the project go to the directory where tabby is in (if you are using wsl, you can open vs code in the current directory you are in by using this command) 
 ```bash
    code .
+```
+
+- make .env file to be able to connect with the server. Look at the server folder to see how to setup and deploy the backend
+- look at .env.example to see how enviornment variables are setup (2 environment variables expected)
+- there is an enviornment variable for a gpu url (used for scan_cover & scan_shelf) and a cpu url (used for search & recommendations)
+- if only using 1 backend url can just set both urls to the same value just need to make sure searches and recommendations are done by a US server. Atleast If google books is still being used and uses IP address to return book data based on region
+```bash
+EXPO_PUBLIC_CPU_US_API_URL=https://examplecpu.com
+EXPO_PUBLIC_GPU_API_URL=https://examplegpu.com
 ```
 
 1. Install dependencies
