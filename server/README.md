@@ -283,7 +283,7 @@ One example is to make a POST request to `/books/recommendations` with the JSON 
 
 To run the server and/or some scripts, we have two environment variables. You
 must specify them whenever you run a portion of code that needs that environment
-variable.
+variable. Put the env file in the server folder.
 
 - `OPENAI_API_KEY`: API key for OpenAI. Must be allowed to use ChatGPT 4o.
 - `GOOGLE_CLOUD_API_KEY`: API for Google Cloud. Must be allowed to use Google Books.
