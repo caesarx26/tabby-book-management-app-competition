@@ -1,22 +1,22 @@
 {
-    "build": {
-        "development": {
-            "android": {
-                "buildType": "apk" // This is for APK
-            },
-            "env": {
-                "EXPO_PUBLIC_CPU_US_API_URL": "https://wicked-rozanne-tabby-personal-33b1056d.koyeb.app/",
-                "EXPO_PUBLIC_GPU_API_URL": "https://fuzzy-katti-tabby-personal-f3285b1b.koyeb.app/"
-            }
-        },
-        "production": {
-            "android": {
-                "buildType": "app-bundle" // This is for AAB
-            },
-            "env": {
-                "EXPO_PUBLIC_CPU_US_API_URL": "https://wicked-rozanne-tabby-personal-33b1056d.koyeb.app/",
-                "EXPO_PUBLIC_GPU_API_URL": "https://fuzzy-katti-tabby-personal-f3285b1b.koyeb.app/"
-            }
-        }
+  "build": {
+    "development": {
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_CPU_US_API_URL": "https://wicked-rozanne-tabby-personal-33b1056d.koyeb.app/",
+        "EXPO_PUBLIC_GPU_API_URL": "https://fuzzy-katti-tabby-personal-f3285b1b.koyeb.app/"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_CPU_US_API_URL": "https://wicked-rozanne-tabby-personal-33b1056d.koyeb.app/",
+        "EXPO_PUBLIC_GPU_API_URL": "https://fuzzy-katti-tabby-personal-f3285b1b.koyeb.app/"
+      }
     }
+  }
 }
