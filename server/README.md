@@ -304,7 +304,8 @@ Koyeb is a web hosting service offering CPU and GPU instances. The current proje
 - GPU instance will be used to handle scan_cover and scan_shelf with the query param nosearch=anyvalue (just return titles and authors found no book info)
 - CPU/Cheaper instance will be used to handle search (after getting titles and authors or online search) also recommendations 
 
-![Koyeb Overview page](./../.github/assets/koyeb_overview.png)
+![Screenshot (146)](https://github.com/user-attachments/assets/4c715106-6724-453a-a2c4-64f0bad39ee6)
+- **I had to use 2 instances** 😢
 
 
 ## Starting/Pausing the instance
@@ -318,14 +319,15 @@ Evidently, there has been a push in the repository and Koyeb is informing you to
 ### Stopping
 To stop the instance, navigate to the settings tab and scroll all the way to the bottom. There you will notice a button to pause or delete the app.
 
-![Koyeb Pause Button](./../.github/assets/koyeb_pause.png)
+![Screenshot (145)](https://github.com/user-attachments/assets/a18305cb-86cf-4184-a12a-177a716f9e3d)
+
 
 ❗IMPORTANT❗: Stop the instance when not in use because Koyeb charges every second including the build time and the cost adds up.
 
 ## Instance settings
 There are a lot of settings that can be changed for the instance with many of them we do not need to worry about so I will describe only the relevant ones.
 
-![Koyeb Settings](./../.github/assets/koyeb_settings.png)
+![Screenshot (144)](https://github.com/user-attachments/assets/0500254c-7c1f-4567-bf3f-82a3ba2b2146)
 
 ### Service type
 What type of instance do we need? Should it have access to the internet or not.
@@ -346,29 +348,46 @@ This section specifies how Koyeb should build the project.
 >__By default__, this will run whatever was provided in the 'Procfile' for the "web:" parameter. Override this to run any other bash command. 
 
 * __Work Directory__: Specifys the location of source directory. Changing this will affect where the build and run command is ran.
->__By default__, the working directory is simply wherever the git repository is at. Override this to moving into any other nested directory. 
+>__By default__, the working directory is simply wherever the git repository is at. Override this to moving into any other nested directory.
 
-![Koyeb Build](./../.github/assets/koyeb_build.png)
+- you should use docker to avoid issues and just make sure working directory is where the server is located in the project (should be)
+```bash
+./server
+```
+![Screenshot (147)](https://github.com/user-attachments/assets/efa188de-594a-474b-8167-c32f41b9d084)
+
 
 ### Environmental Variables
-If the project needs environmental variables, it would have to be set here. Evidently, our project does require some environmental variables in the form of API keys and each of them will have to be listed here.
+If the project needs environmental variables, it would have to be set through the Koyeb setting. Evidently, our project does require some environmental variables in the form of API keys and each of them will have to be listed 
+- openai key (openai account with some credits) and google cloud api key (with google books api enabled for the google cloud account)
 
-![Koyeb Environmental Variables](./../.github/assets/koyeb_EV.png)
 
 ### Instances
 A few instances are offered with a majority of them being CPU instances. Notable, the free instance only allows for 2000MB of disk storage which apparently exceeds the size of the build for the project. Requiring an upgrade to another CPU instance so that it can be build properly. 
+- **CPU Instance To Do Searches (needs to be in the US)**
+![Screenshot (149)](https://github.com/user-attachments/assets/0cfe9f7a-0ef2-44f9-8d6d-0c952b1f2aae)
 
-![Koyeb Instances](./../.github/assets/koyeb_instances.png)
+- **GPU Instance To Do Scanning (can be anywhere now as long as you have US service to do searches)**
+![Screenshot (150)](https://github.com/user-attachments/assets/a319010b-1e13-405a-871d-152768e0acb6)
+
 
 ### Regions
 Depending on the selected instance, different regions will become avalible. For this particular example, the region which would result in the least latency is Washington D.C so that will be the region we will be using for now. 
+- **NOTE** if GPU instance can be put in the US then you will only need to make 1 service no need for 2
 
 ![Koyeb Regions](./../.github/assets/koyeb_regions.png)
 
 ### Scaling
 Depending on the selected instance, different options will become avalible for scaling; wheither it be fixed or autoscaled. Scaling will help with load balancing and prevent long wait times for the server to respond. 
+
 Currently, just one instance is sufficient for most tasks. 
 
 ![Koyeb Instance Scaling](./../.github/assets/koyeb_instance.png)
 
 ❗❗❗Once again, it is important to stop the instance if it is not in use to prevent accruing uneccessary cost. 
+
+### Using the service 
+- you can now just save and deploy the service(s) and go and test the public urls from koyeb to make sure they work
+- you can test with postman and upload files easily through binary to test scanning
+- if you make 2 services to connect with app, can use 2 enviornment variables to use the correct service. gpu_url for scanning and cpu_url for search/recommendations
+- Otherwise if just 1 gpu service in the US then only 1 url needed (can just set both variables to same url)
